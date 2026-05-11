@@ -1,0 +1,644 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  ogImage?: string;
+}
+
+const { title, description, canonical, ogImage } = Astro.props;
+const siteUrl = "https://english-tutor-mexico.pages.dev";
+const defaultDesc = "Personalized online English lessons for professionals in Mexico. Native US English speaker — conversation, interviews, and confidence.";
+const defaultOgImage = ogImage ?? "https://avatars.githubusercontent.com/u/282408621?v=4";
+const pageUrl = canonical ?? Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="es" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description ?? defaultDesc} />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={`${siteUrl}${pageUrl}`} />
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={`${siteUrl}${pageUrl}`} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description ?? defaultDesc} />
+    <meta property="og:image" content={defaultOgImage} />
+    <meta property="og:locale" content="es_MX" />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description ?? defaultDesc} />
+    <meta name="twitter:image" content={defaultOgImage} />
+
+    <!-- Geo tags for Mexico targeting -->
+    <meta name="geo.region" content="MX" />
+    <meta name="geo.placename" content="Mexico" />
+
+    <!-- JSON-LD structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Mauricio Tellez",
+        "jobTitle": "English Coach & Software Engineer",
+        "description": "Native US English speaker offering personalized English coaching for professionals in Mexico",
+        "url": "https://english-tutor-mexico.pages.dev",
+        "image": "https://avatars.githubusercontent.com/u/282408621?v=4",
+        "knowsLanguage": ["en", "es"],
+        "address": { "@type": "PostalAddress", "addressCountry": "MX" }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "English Coaching Mexico",
+        "description": "One-on-one English coaching from a native US English speaker. Personalized sessions for professionals in Mexico.",
+        "provider": { "@type": "Person", "name": "Mauricio Tellez" },
+        "areaServed": { "@type": "Country", "name": "MX" },
+        "availableChannel": { "@type": "ServiceChannel", "serviceUrl": "https://english-tutor-mexico.pages.dev/book" }
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script is:inline>
+      window.__T = {
+  "site.logo": { en: "English Coach", es: "Coach de Inglés" },
+  "nav.home": { en: "Home", es: "Inicio" },
+  "nav.pricing": { en: "Pricing", es: "Precios" },
+  "nav.about": { en: "About", es: "Sobre mí" },
+  "nav.book": { en: "Free Consultation", es: "Consulta Gratis" },
+  "hero.badge": { en: "English coaching for professionals", es: "Coaching de inglés para profesionales" },
+  "hero.heading1": { en: "English coaching", es: "Coaching de inglés" },
+  "hero.heading2": { en: "for professionals in Mexico", es: "para profesionales en México" },
+  "hero.subtitle": { en: "Personalized online lessons with a native US English speaker. Improve conversation, interviews, meetings, and confidence.", es: "Clases en línea personalizadas con un hablante nativo de EE.UU. Mejora tu conversación, entrevistas, reuniones y confianza." },
+  "hero.btn1": { en: "Book Free Consultation", es: "Agendar Consulta Gratis" },
+  "hero.btn2": { en: "View Pricing", es: "Ver Precios" },
+  "hero.btn3": { en: "Questions? Message me", es: "¿Preguntas? Escríbeme" },
+  "hero.stat1a": { en: "Google Meet", es: "Google Meet" },
+  "hero.stat1b": { en: "Online sessions", es: "Sesiones en línea" },
+  "hero.stat2a": { en: "Native US", es: "EE.UU." },
+  "hero.stat2b": { en: "English speaker", es: "Hablante nativo" },
+  "hero.stat3a": { en: "MXN", es: "MXN" },
+  "hero.stat3b": { en: "Pay in pesos", es: "Paga en pesos" },
+  "who.eyebrow": { en: "Who I Help", es: "A quién ayudo" },
+  "who.title": { en: "Who I Help", es: "¿A quién ayudo?" },
+  "who.desc": { en: "Professionals and students who want to speak English with confidence.", es: "Profesionales y estudiantes que quieren hablar inglés con confianza." },
+  "who.card1": { en: "Software Developers", es: "Desarrolladores" },
+  "who.card1.desc": { en: "Improve technical English for international teams.", es: "Mejora tu inglés técnico para equipos internacionales." },
+  "who.card2": { en: "Remote Workers", es: "Trabajadores Remotos" },
+  "who.card2.desc": { en: "Communicate better with English-speaking colleagues.", es: "Comunícate mejor con colegas de habla inglesa." },
+  "who.card3": { en: "University Students", es: "Estudiantes" },
+  "who.card3.desc": { en: "Prepare for exchanges, academic reading, and exams.", es: "Prepárate para intercambios y exámenes." },
+  "who.card4": { en: "Job Seekers", es: "Buscadores de Empleo" },
+  "who.card4.desc": { en: "Master English interviews and stand out.", es: "Domina entrevistas en inglés y destaca." },
+  "who.card5": { en: "Professionals", es: "Profesionales" },
+  "who.card5.desc": { en: "English for meetings, presentations, and executive communication.", es: "Inglés para juntas y comunicación ejecutiva." },
+  "who.card6": { en: "Struggling Speakers", es: "Los que batallan" },
+  "who.card6.desc": { en: "You understand but struggle to speak. Let's work on that.", es: "Entiendes pero te cuesta hablar. Trabajemos eso." },
+  "focus.eyebrow": { en: "What We Focus On", es: "En qué nos enfocamos" },
+  "focus.title": { en: "What We Focus On", es: "¿En qué nos enfocamos?" },
+  "focus.desc": { en: "Real communication, not textbook grammar.", es: "En comunicación real, no en gramática de libro." },
+  "focus.item1": { en: "Speaking naturally in conversations", es: "Hablar natural en conversaciones" },
+  "focus.item1.desc": { en: "Learn to express yourself without translating.", es: "Aprende a expresarte sin traducir mentalmente." },
+  "focus.item2": { en: "Building confidence", es: "Desarrollar confianza" },
+  "focus.item2.desc": { en: "Lose the fear of speaking and making mistakes.", es: "Pierde el miedo a hablar y cometer errores." },
+  "focus.item3": { en: "Understanding native speakers", es: "Entender a hablantes nativos" },
+  "focus.item3.desc": { en: "Improve comprehension of natural, fast English.", es: "Mejora tu comprensión del inglés natural." },
+  "focus.item4": { en: "Interview preparation", es: "Preparación para entrevistas" },
+  "focus.item4.desc": { en: "Practice real interview questions and answers.", es: "Practica preguntas para entrevistas reales." },
+  "focus.item5": { en: "Business communication", es: "Comunicación empresarial" },
+  "focus.item5.desc": { en: "Emails, meetings, presentations, and negotiations.", es: "Correos, juntas, presentaciones y negociaciones." },
+  "focus.item6": { en: "Pronunciation and fluency", es: "Pronunciación y fluidez" },
+  "focus.item6.desc": { en: "Sound more natural and be understood better.", es: "Suena más natural y que te entiendan mejor." },
+  "how.eyebrow": { en: "How Lessons Work", es: "Cómo funcionan" },
+  "how.title": { en: "How Lessons Work", es: "¿Cómo funcionan las sesiones?" },
+  "how.step1.title": { en: "Free Consultation", es: "Consulta Gratis" },
+  "how.step1.desc": { en: "We discuss your goals and current level.", es: "Hablamos de tus metas y nivel actual." },
+  "how.step2.title": { en: "Personalized Lessons", es: "Sesiones Personalizadas" },
+  "how.step2.desc": { en: "Lessons are adapted to your needs and interests.", es: "Las sesiones se adaptan a tus necesidades e intereses." },
+  "how.step3.title": { en: "Consistent Speaking Practice", es: "Práctica Constante" },
+  "how.step3.desc": { en: "Improve confidence through real conversation.", es: "Mejora tu confianza con conversación real." },
+  "relaxed.eyebrow": { en: "No pressure", es: "Sin presiones" },
+  "relaxed.title": { en: "Relaxed, practical lessons", es: "Clases relajadas y prácticas" },
+  "relaxed.desc": { en: "Lessons are conversational and adapted to your pace. Mistakes are normal. The goal is real communication and confidence.", es: "Las sesiones son conversacionales y se adaptan a tu ritmo. Los errores son normales. La meta es la comunicación real y la confianza." },
+  "relaxed.btn": { en: "Book Free Consultation", es: "Agendar Consulta Gratis" },
+  "faq.eyebrow": { en: "FAQ", es: "FAQ" },
+  "faq.title": { en: "Common questions", es: "Preguntas frecuentes" },
+  "faq.q1": { en: "Do I need perfect English?", es: "¿Necesito inglés perfecto?" },
+  "faq.a1": { en: "No. Lessons are adapted to your level.", es: "No. Las sesiones se adaptan a tu nivel." },
+  "faq.q2": { en: "Are lessons online?", es: "¿Las sesiones son en línea?" },
+  "faq.a2": { en: "Yes — via Google Meet, Zoom, or Discord.", es: "Sí — por Google Meet, Zoom o Discord." },
+  "faq.q3": { en: "Can you help with interviews?", es: "¿Ayudas con entrevistas?" },
+  "faq.a3": { en: "Yes. Interview prep is one of my specialties.", es: "Sí. La preparación de entrevistas es mi especialidad." },
+  "faq.q4": { en: "Do you teach beginners?", es: "¿Enseñas a principiantes?" },
+  "faq.a4": { en: "Yes, but lessons focus on speaking and practical communication from day one.", es: "Sí, pero las sesiones se enfocan en hablar desde el día uno." },
+  "faq.q5": { en: "Can I reschedule?", es: "¿Puedo reagendar?" },
+  "faq.a5": { en: "Yes, with 24 hours advance notice.", es: "Sí, con 24 horas de aviso." },
+  "cta.title": { en: "Ready to start speaking more confidently?", es: "¿Listo para hablar con más confianza?" },
+  "cta.desc": { en: "Book your free consultation and take the first step.", es: "Agenda tu consulta gratis y da el primer paso." },
+  "cta.btn": { en: "Start Speaking More Confidently", es: "Empieza a Hablar con Confianza" },
+  "footer.desc": { en: "English coaching by Mauricio Tellez — native US speaker & engineer.", es: "Coaching de inglés por Mauricio Tellez — hablante nativo de EE.UU. e ingeniero." }
+};
+    </script>
+    <script is:inline src="/i18n.js"></script>
+    <style is:global>
+      /* ---------- Theme variables ---------- */
+      :root,
+      [data-theme="light"] {
+        --bg-primary: #f8fafc;
+        --bg-secondary: #ffffff;
+        --bg-glass: rgba(255,255,255,0.7);
+        --text-primary: #0f172a;
+        --text-secondary: #475569;
+        --text-muted: #94a3b8;
+        --border-subtle: rgba(0,0,0,0.08);
+        --border-glass: rgba(0,0,0,0.06);
+        --c-indigo: #6366f1;
+        --c-indigo-light: #818cf8;
+        --c-cyan: #22d3ee;
+        --c-emerald: #34d399;
+        --glow-indigo: rgba(99,102,241,0.08);
+        --glow-cyan: rgba(6,182,212,0.06);
+        --shadow-card: 0 4px 20px rgba(0,0,0,0.05);
+        --header-bg: rgba(255,255,255,0.8);
+        --badge-bg: rgba(99,102,241,0.08);
+        --badge-border: rgba(99,102,241,0.15);
+        --badge-text: #6366f1;
+        --btn-primary-bg: #6366f1;
+        --btn-primary-text: #fff;
+        --btn-primary-shadow: rgba(99,102,241,0.25);
+        --btn-secondary-bg: rgba(0,0,0,0.03);
+        --btn-secondary-border: rgba(0,0,0,0.1);
+        --cta-gradient: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(6,182,212,0.04));
+      }
+
+      [data-theme="dark"] {
+        --bg-primary: #020617;
+        --bg-secondary: #0f172a;
+        --bg-glass: rgba(15,23,42,0.65);
+        --text-primary: #f8fafc;
+        --text-secondary: #cbd5e1;
+        --text-muted: #64748b;
+        --border-subtle: rgba(255,255,255,0.06);
+        --border-glass: rgba(255,255,255,0.08);
+        --c-indigo: #818cf8;
+        --c-indigo-light: #a5b4fc;
+        --c-cyan: #22d3ee;
+        --c-emerald: #34d399;
+        --glow-indigo: rgba(99,102,241,0.15);
+        --glow-cyan: rgba(6,182,212,0.10);
+        --shadow-card: 0 20px 60px rgba(0,0,0,0.3);
+        --header-bg: rgba(2,6,23,0.8);
+        --badge-bg: rgba(99,102,241,0.12);
+        --badge-border: rgba(99,102,241,0.2);
+        --badge-text: #a5b4fc;
+        --btn-primary-bg: #6366f1;
+        --btn-primary-text: #fff;
+        --btn-primary-shadow: rgba(99,102,241,0.3);
+        --cta-gradient: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(6,182,212,0.08));
+      }
+
+      /* ---------- Reset ---------- */
+      *,
+      *::before,
+      *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        background: var(--bg-primary);
+        color: var(--text-secondary);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
+        transition: background 0.3s, color 0.3s;
+      }
+
+      a { color: var(--c-indigo); text-decoration: none; }
+      a:hover { color: var(--c-indigo-light); }
+
+      img { max-width: 100%; display: block; }
+
+      .container {
+        width: 100%;
+        margin-inline: auto;
+        max-width: 1120px;
+        padding-inline: 1.5rem;
+      }
+      @media (min-width: 1024px) {
+        .container { padding-inline: 2rem; }
+      }
+
+      /* ---- Section system ---- */
+      .section {
+        position: relative;
+        padding: 5rem 0;
+      }
+      @media (min-width: 768px) {
+        .section { padding: 7rem 0; }
+      }
+
+      .section-divider::before {
+        content: "";
+        position: absolute;
+        inset-inline: 0;
+        top: 0;
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent);
+        pointer-events: none;
+      }
+
+      .bg-subtle { background: rgba(255,255,255,0.015); }
+      .bg-indigo-tint { background: rgba(99,102,241,0.025); }
+
+      .surface {
+        border-radius: 40px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.025);
+        padding: 2rem;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+      @media (min-width: 768px) {
+        .surface { padding: 3rem; }
+      }
+
+      .mini-section {
+        max-width: 640px;
+        margin: 0 auto;
+        text-align: center;
+      }
+      .mini-section .section-eyebrow {
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--c-indigo);
+        margin-bottom: 1rem;
+      }
+      .mini-section .section-eyebrow-light {
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: #64748b;
+        margin-bottom: 1rem;
+      }
+      .mini-section h2 {
+        font-size: clamp(1.75rem, 4vw, 2.75rem);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        color: #fff;
+        line-height: 1.15;
+      }
+      .mini-section p {
+        margin-top: 1.25rem;
+        font-size: 1.125rem;
+        line-height: 1.8;
+        color: #94a3b8;
+      }
+
+      .bg-glow {
+        pointer-events: none;
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+        z-index: -1;
+      }
+      .bg-glow::before {
+        content: "";
+        position: absolute;
+        left: -10%;
+        top: 0;
+        width: 500px;
+        height: 500px;
+        border-radius: 50%;
+        background: var(--glow-indigo);
+        filter: blur(100px);
+      }
+      .bg-glow::after {
+        content: "";
+        position: absolute;
+        right: -5%;
+        bottom: -10%;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        background: var(--glow-cyan);
+        filter: blur(120px);
+      }
+
+      .glass {
+        background: var(--bg-glass);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--border-glass);
+        transition: all 0.3s;
+      }
+      .glass:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-card);
+      }
+
+      .section-border {
+        border-top: 1px solid var(--border-subtle);
+      }
+
+      .btn-primary,
+      .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.75rem 2rem;
+        border-radius: 16px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        text-decoration: none !important;
+        background: var(--btn-secondary-bg, rgba(255,255,255,0.05));
+        color: var(--text-primary) !important;
+        border: 1px solid var(--btn-secondary-border, var(--border-glass));
+      }
+      .btn-secondary:hover {
+        background: var(--btn-secondary-bg, rgba(255,255,255,0.1));
+        border-color: rgba(255,255,255,0.2);
+      }
+
+      .btn-primary {
+        background: var(--btn-primary-bg);
+        color: var(--btn-primary-text) !important;
+        box-shadow: 0 4px 14px var(--btn-primary-shadow);
+      }
+      .btn-primary:hover {
+        background: var(--c-indigo-light);
+        box-shadow: 0 6px 20px var(--btn-primary-shadow);
+      }
+
+      .btn-secondary {
+        background: rgba(255,255,255,0.05);
+        color: var(--text-primary) !important;
+        border: 1px solid var(--border-glass);
+      }
+      .btn-secondary:hover {
+        background: rgba(255,255,255,0.1);
+        border-color: rgba(255,255,255,0.2);
+      }
+
+      .section-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--c-indigo);
+        margin-bottom: 1rem;
+      }
+      .section-title {
+        font-size: clamp(1.75rem, 4vw, 2.75rem);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        color: var(--text-primary);
+        line-height: 1.15;
+      }
+      .section-desc {
+        font-size: 1.05rem;
+        color: var(--text-muted);
+        margin-top: 1rem;
+        max-width: 560px;
+      }
+
+      .section-block {
+        padding: 5rem 0;
+      }
+      @media (min-width: 768px) {
+        .section-block { padding: 6rem 0; }
+      }
+
+      /* ---------- Header ---------- */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: var(--header-bg);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--border-subtle);
+      }
+      header .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-block: 0.85rem;
+      }
+      .logo {
+        font-weight: 700;
+        font-size: 1.05rem;
+        color: var(--text-primary) !important;
+        letter-spacing: -0.02em;
+      }
+      .logo:hover { opacity: 0.8; }
+      .logo span { color: var(--c-indigo); }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      nav { display: flex; gap: 1.5rem; align-items: center; }
+      nav a { font-size: 0.9rem; font-weight: 500; color: var(--text-muted); transition: color 0.2s; }
+      nav a:hover { color: var(--text-primary); }
+      nav a.btn-book { color: #fff !important; }
+      .btn-book {
+        background: var(--btn-primary-bg) !important;
+        color: var(--btn-primary-text) !important;
+        padding: 0.5rem 1.35rem !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        font-size: 0.85rem !important;
+        white-space: nowrap;
+      }
+      .btn-book:hover { background: var(--c-indigo-light) !important; }
+
+      .lang-select {
+        background: rgba(255,255,255,0.06);
+        color: var(--c-indigo);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 8px;
+        padding: 0.35rem 0.6rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+        letter-spacing: 0.04em;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .lang-select:hover { border-color: var(--c-indigo); }
+      .lang-select optgroup,
+      .lang-select option { background: #0f172a; color: #fff; }
+
+      .nav-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--text-muted);
+      }
+
+      .lang-select-footer { display: none; }
+
+      @media (width <= 640px) {
+        .lang-select-header { display: none; }
+        .lang-select-footer { display: inline-block; }
+        .nav-toggle { display: block; }
+        .header-right nav {
+          display: none;
+          flex-direction: column;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: var(--header-bg);
+          backdrop-filter: blur(16px);
+          padding: 1rem 5%;
+          border-bottom: 1px solid var(--border-subtle);
+          gap: 0.75rem;
+        }
+        .header-right nav.open { display: flex; }
+      }
+
+      /* ---------- Footer ---------- */
+      footer {
+        border-top: 1px solid var(--border-subtle);
+        padding: 3rem 0;
+      }
+      footer .container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+      }
+      .footer-brand {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+      .footer-brand span { color: var(--c-indigo); }
+      .footer-desc {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        max-width: 360px;
+        line-height: 1.6;
+        margin-top: 0.35rem;
+      }
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        font-size: 0.85rem;
+      }
+      .footer-links a { color: var(--text-muted); }
+      .footer-links a:hover { color: var(--c-indigo); }
+
+      /* ---------- Page header ---------- */
+      .page-header {
+        padding: 5rem 0 2rem;
+        text-align: center;
+      }
+      .page-header h1 {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        color: var(--text-primary);
+      }
+      .page-header p {
+        font-size: 1.05rem;
+        color: var(--text-muted);
+        margin-top: 0.75rem;
+        max-width: 560px;
+        margin-inline: auto;
+      }
+
+      /* ---------- WhatsApp floating button removed — now inline in hero CTA ---------- */
+    </style>
+  </head>
+  <body>
+    <!-- Background glow -->
+    <div class="bg-glow"></div>
+
+    <header>
+      <div class="container">
+        <a href="/" class="logo">Mauricio Tellez <span>|</span> <span data-i18n="site.logo">English Coach</span></a>
+        <div class="header-right">
+          <nav id="nav">
+            <a href="/" data-i18n="nav.home">Inicio</a>
+            <a href="/pricing" data-i18n="nav.pricing">Precios</a>
+            <a href="/about" data-i18n="nav.about">Sobre mí</a>
+            <a href="/book" class="btn-book" data-i18n="nav.book">Consulta Gratis</a>
+          </nav>
+          <select class="lang-select lang-select-header" id="langSelect" aria-label="Language">
+            <option value="es">ES</option>
+            <option value="en">EN</option>
+          </select>
+          <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer>
+      <div class="container">
+        <div>
+          <div class="footer-brand">English Coaching <span>in Mexico</span></div>
+          <p class="footer-desc" data-i18n="footer.desc">Coaching de inglés por Mauricio Tellez — hablante nativo de EE.UU. e ingeniero de software.</p>
+        </div>
+        <div class="footer-links">
+          <a href="/pricing">Precios</a>
+          <a href="/about">Sobre mí</a>
+          <a href="/book">Agendar</a>
+          <a href="/privacy">Privacidad</a>
+          <a href="https://github.com/mauriciotellezdev" target="_blank" rel="noopener">GitHub</a>
+        </div>
+        <select class="lang-select lang-select-footer" aria-label="Language">
+          <option value="es">ES</option>
+          <option value="en">EN</option>
+        </select>
+      </div>
+    </footer>
+
+    <!-- WhatsApp floating button removed — now inline in hero CTA -->
+
+    <script>
+      // Language switcher
+      var langSelects = document.querySelectorAll(".lang-select");
+      var savedLang = localStorage.getItem("lang") || "es";
+      langSelects.forEach(function(s) { s.value = savedLang; });
+      if (window.__switchLang) window.__switchLang(savedLang);
+      langSelects.forEach(function(s) {
+        s.addEventListener("change", function() {
+          if (window.__switchLang) window.__switchLang(this.value);
+        });
+      });
+
+      // Mobile nav
+      document.getElementById("navToggle")?.addEventListener("click", function() {
+        document.getElementById("nav")?.classList.toggle("open");
+      });
+    </script>
+  </body>
+</html>

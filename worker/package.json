@@ -1,0 +1,17 @@
+{
+  "name": "english-tutor-stripe-worker",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "cf-typegen": "wrangler types"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.0.0",
+    "wrangler": "^4.0.0"
+  },
+  "dependencies": {
+    "stripe": "^17.0.0"
+  }
+}

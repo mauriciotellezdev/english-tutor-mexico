@@ -1,0 +1,11 @@
+name = "english-tutor-mexico-worker"
+main = "src/index.ts"
+compatibility_date = "2026-05-01"
+account_id = "46e7500b33be08b5e4a9847facbf6911"
+
+# ---------- Secrets (set via `wrangler secret put`) ----------
+# STRIPE_SECRET_KEY
+# STRIPE_WEBHOOK_SECRET
+# SINGLE_PRICE_ID
+# PACK10_PRICE_ID
+# CORS_ORIGIN
