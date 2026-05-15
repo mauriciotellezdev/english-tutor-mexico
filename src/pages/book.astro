@@ -7,30 +7,33 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
     <div class="container">
       <div class="section-label">Agendar</div>
       <h1>Consulta Gratis</h1>
-      <p>Agenda una llamada de 20 minutos sin costo para conocer tu nivel y tus metas.</p>
+      <p>Agenda tu sesión y descubre si calificas para una clase gratis.</p>
     </div>
   </section>
 
   <section class="section-block" style="padding-top: 2rem;">
     <div class="container" style="max-width: 600px; margin: 0 auto;">
-      <div class="glass booking-card">
-        <h3>¿Listo para empezar?</h3>
-        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;">
-          Elige un plan en Precios y paga via Stripe para agendar tu clase.
-          Te contactaré personalmente para coordinar el horario.
+      <!-- Postal code checker -->
+      <div class="glass booking-card" id="cp-card">
+        <h3>¿Eres de la zona de Tehuacán?</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem;">
+          Ingresa tu código postal y te diré si calificas para una <strong>clase de 1 hora completamente gratis</strong>.
         </p>
-        <a href="/pricing" class="btn-primary" style="width: 100%; justify-content: center; display: flex; margin-top: 1rem;">
-          Ver Planes y Precios
-        </a>
+        <div class="cp-form">
+          <input type="text" id="cp-input" class="cp-input" placeholder="Código Postal" maxlength="5" inputmode="numeric" pattern="[0-9]*" autocomplete="postal-code" />
+          <button id="cp-btn" class="btn-primary cp-btn">Verificar</button>
+        </div>
+        <div id="cp-result" class="cp-result"></div>
       </div>
 
-      <div class="glass booking-card">
-        <h3>¿Prefieres probar primero?</h3>
-        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem;">
-          Agenda una consulta gratuita de 20 minutos para conocernos.
+      <!-- Calendly section (shown after CP check or skip) -->
+      <div id="calendly-section" class="glass booking-card" style="display: none;">
+        <h3 id="calendly-heading">Agenda tu consulta gratuita</h3>
+        <p id="calendly-sub" style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem;">
+          20 minutos para conocernos y hablar de tus metas.
         </p>
         <!-- Calendly inline widget begin -->
-        <div class="calendly-inline-widget" data-url="https://calendly.com/mauriciotellezdev/consulta-gratis?hide_event_type_details=1&hide_gdpr_banner=1&background_color=020617&text_color=ffffff" style="min-width:320px;height:700px;"></div>
+        <div class="calendly-inline-widget" id="calendly-widget" data-url="https://calendly.com/mauriciotellezdev/consulta-gratis?hide_event_type_details=1&hide_gdpr_banner=1&background_color=020617&text_color=ffffff" style="min-width:320px;height:700px;"></div>
         <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
         <!-- Calendly inline widget end -->
       </div>
@@ -38,7 +41,117 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
   </section>
 </BaseLayout>
 
+<script>
+  // Tehuacán center coordinates
+  const TEHUACAN = { lat: 18.4617, lng: -97.3928 };
+
+  // Postal codes within ~50km of Tehuacán center
+  // Based on SEPOMEX data for Tehuacán region, Puebla
+  const TEHUACAN_CODES = new Set([
+    // Tehuacán proper (75700-75799)
+    75700, 75710, 75717, 75718, 75720, 75730, 75740, 75750, 75760, 75770,
+    75771, 75772, 75773, 75774, 75775, 75776, 75777, 75778, 75779, 75780,
+    75784, 75785, 75786, 75787, 75788, 75789, 75790, 75791, 75792, 75793,
+    75794, 75795, 75796, 75797, 75798, 75799,
+    // San Lorenzo Teotipilco area
+    75800, 75801, 75802, 75803, 75804, 75805, 75806, 75807, 75808, 75809,
+    // Santiago Miahuatlán
+    75820, 75821, 75822, 75823, 75824, 75825, 75826,
+    // Chapulco
+    75880, 75881, 75882, 75883, 75885, 75886, 75887, 75888, 75889,
+    // Nicolás Bravo / Vicente Guerrero area
+    75850, 75851, 75852, 75853, 75854, 75855, 75856, 75857, 75858, 75859,
+    75860, 75861, 75862, 75863, 75864, 75865, 75866, 75867, 75868, 75869,
+    // Ajalpan
+    75900, 75901, 75902, 75903, 75904, 75905, 75906, 75907, 75908, 75909,
+    75910, 75911, 75912, 75913, 75914, 75915, 75916, 75917, 75918, 75919,
+    // Zinacatepec
+    75960, 75961, 75962, 75963, 75964, 75965, 75966, 75967, 75968, 75969,
+    // San José Miahuatlán
+    75980, 75981, 75982, 75983, 75984, 75985, 75986, 75987, 75988, 75989,
+    // Coxcatlán
+    75840, 75841, 75842, 75843, 75844, 75845, 75846, 75847, 75848, 75849,
+    // Altepexi
+    75950, 75951, 75952, 75953, 75954, 75955, 75956, 75957, 75958, 75959,
+    // Tecamachalco area (within ~50km)
+    75400, 75410, 75420, 75430, 75440, 75480, 75481, 75482, 75483, 75484,
+    75485, 75486, 75487, 75488, 75489,
+    // Palmar de Bravo
+    75500, 75501, 75502, 75503, 75504, 75505, 75506, 75507, 75508, 75509,
+    75510, 75511, 75512, 75513, 75514, 75515, 75516, 75517, 75518, 75519,
+    // Quecholac
+    75460, 75461, 75462, 75463, 75464, 75465, 75466, 75467, 75468, 75469,
+  ]);
+
+  function isTehuacanArea(cp) {
+    return TEHUACAN_CODES.has(cp);
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    var input = document.getElementById("cp-input");
+    var btn = document.getElementById("cp-btn");
+    var result = document.getElementById("cp-result");
+    var calendlySection = document.getElementById("calendly-section");
+    var calendlyHeading = document.getElementById("calendly-heading");
+    var calendlySub = document.getElementById("calendly-sub");
+
+    btn.addEventListener("click", function() {
+      var raw = input.value.trim();
+      if (!raw || raw.length !== 5 || !/^\d{5}$/.test(raw)) {
+        result.innerHTML = '<span class="cp-error">Ingresa un código postal válido de 5 dígitos.</span>';
+        return;
+      }
+      var cp = parseInt(raw, 10);
+      var inArea = isTehuacanArea(cp);
+
+      if (inArea) {
+        result.innerHTML = '<div class="cp-success">🎉 ¡Felicidades! Calificas para una <strong>clase de 1 hora completamente gratis</strong>. Agenda aquí tu sesión:</div>';
+        calendlyHeading.textContent = "Agenda tu clase gratis";
+        calendlySub.textContent = "1 hora — sin costo. Nos vemos pronto.";
+      } else {
+        result.innerHTML = '<div class="cp-info">No calificas para la clase gratis, pero igual puedes agendar una consulta gratuita de 20 minutos.</div>';
+        calendlyHeading.textContent = "Agenda tu consulta gratuita";
+        calendlySub.textContent = "20 minutos para conocernos y hablar de tus metas.";
+      }
+
+      // Reset Calendly widget by re-initializing
+      calendlySection.style.display = "block";
+      calendlySection.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    // Allow Enter key
+    input.addEventListener("keydown", function(e) {
+      if (e.key === "Enter") btn.click();
+    });
+  });
+</script>
+
 <style is:global>
   .booking-card { padding: 1.5rem; border-radius: 20px; margin-bottom: 1.5rem; }
   .booking-card h3 { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; }
+
+  .cp-form { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .cp-input {
+    flex: 1; min-width: 160px;
+    padding: 0.75rem 1rem; border-radius: 12px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+    color: #fff; font-size: 1rem; font-family: inherit;
+    outline: none; transition: border-color 0.2s;
+  }
+  .cp-input:focus { border-color: var(--c-indigo); }
+  .cp-input::placeholder { color: #64748b; }
+  .cp-btn { white-space: nowrap; }
+
+  .cp-result { margin-top: 1rem; font-size: 0.95rem; line-height: 1.6; }
+  .cp-error { color: #f87171; }
+  .cp-success {
+    padding: 1rem; border-radius: 12px;
+    background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2);
+    color: #6ee7b7;
+  }
+  .cp-info {
+    padding: 1rem; border-radius: 12px;
+    background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.15);
+    color: #a5b4fc;
+  }
 </style>
