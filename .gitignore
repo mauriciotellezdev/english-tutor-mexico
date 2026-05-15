@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+*.env
+worker/.env
+worker/node_modules/
+worker/.wrangler/
+.astro/
