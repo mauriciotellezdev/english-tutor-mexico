@@ -20,7 +20,7 @@ interface Env {
 
   // Supabase admin (for magic links)
   SUPABASE_URL: string;
-  SUPABASE_SERVICE_ROLE_KEY: string;
+  SUPABASE_SECRET_KEY: string;
 
   // Resend (for sending emails)
   RESEND_API_KEY: string;
@@ -198,8 +198,8 @@ export default {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            apikey: env.SUPABASE_SERVICE_ROLE_KEY,
-            Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+            apikey: env.SUPABASE_SECRET_KEY,
+            Authorization: `Bearer ${env.SUPABASE_SECRET_KEY}`,
           },
           body: JSON.stringify({
             email,
@@ -282,8 +282,8 @@ export default {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            apikey: env.SUPABASE_SERVICE_ROLE_KEY,
-            Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+            apikey: env.SUPABASE_SECRET_KEY,
+            Authorization: `Bearer ${env.SUPABASE_SECRET_KEY}`,
           },
           body: JSON.stringify({
             type: type || "magiclink",
