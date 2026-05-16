@@ -1,0 +1,187 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { t } from "@/i18n/utils.ts";
+
+const locale = "es";
+---
+
+<BaseLayout title={t("pricing.pageTitle", locale)} description={t("pricing.subtitle", locale)}>
+  <section class="page-header">
+    <div class="container">
+      <div class="section-label">{t("pricing.sectionLabel", locale)}</div>
+      <h1>{t("pricing.title", locale)}</h1>
+      <p>{t("pricing.subtitle", locale)}</p>
+    </div>
+  </section>
+
+  <section class="section-block" style="padding-top: 2rem;">
+    <div class="container">
+      <div class="pricing-grid">
+        <!-- TRIAL LESSON -->
+        <div class="glass pricing-card">
+          <div class="pricing-name">{t("pricing.trialName", locale)}</div>
+          <div class="pricing-amount">
+            <span class="pricing-currency">$</span>400
+            <span class="pricing-period">{t("pricing.trialPeriod", locale)}</span>
+          </div>
+          <div class="pricing-sub">{t("pricing.trialDesc", locale)}</div>
+          <ul class="pricing-features">
+            <li>{t("pricing.trialFeature1", locale)}</li>
+            <li>{t("pricing.trialFeature2", locale)}</li>
+            <li>{t("pricing.trialFeature3", locale)}</li>
+            <li>{t("pricing.trialFeature4", locale)}</li>
+          </ul>
+          <button class="btn-primary stripe-checkout" data-plan="single" style="width: 100%; justify-content: center;">
+            {t("pricing.trialBtn", locale)}
+          </button>
+        </div>
+
+        <!-- MOST POPULAR - 10 LESSON PACKAGE -->
+        <div class="glass pricing-card pricing-featured">
+          <div class="pricing-popular">{t("pricing.popular", locale)}</div>
+          <div class="pricing-name">{t("pricing.packName", locale)}</div>
+          <div class="pricing-amount">
+            <span class="pricing-currency">$</span>3,000
+            <span class="pricing-period">{t("pricing.packPeriod", locale)}</span>
+          </div>
+          <div class="pricing-sub">{t("pricing.packDesc", locale)}</div>
+          <ul class="pricing-features">
+            <li>{t("pricing.packFeature1", locale)}</li>
+            <li>{t("pricing.packFeature2", locale)}</li>
+            <li>{t("pricing.packFeature3", locale)}</li>
+            <li>{t("pricing.packFeature4", locale)}</li>
+            <li>{t("pricing.packFeature5", locale)}</li>
+          </ul>
+          <button class="btn-primary stripe-checkout" data-plan="pack10" style="width: 100%; justify-content: center;">
+            {t("pricing.packBtn", locale)}
+          </button>
+        </div>
+
+        <!-- FREE CONSULTATION -->
+        <div class="glass pricing-card">
+          <div class="pricing-name">{t("book.title", locale)}</div>
+          <div class="pricing-amount" style="font-size: 2.5rem;">$0</div>
+          <div class="pricing-sub">{t("book.calendlySub", locale)}</div>
+          <ul class="pricing-features">
+            <li>{t("pricing.freeFeature1", locale)}</li>
+            <li>{t("pricing.freeFeature2", locale)}</li>
+            <li>{t("pricing.freeFeature3", locale)}</li>
+            <li>{t("pricing.freeFeature4", locale)}</li>
+          </ul>
+          <a href={`/${locale}/book`} class="btn-secondary" style="width: 100%; justify-content: center; display: flex;">
+            {t("about.ctaBtn", locale)}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Payment Methods -->
+  <section class="section-border section-block" style="padding-top: 2rem; padding-bottom: 0;">
+    <div class="container">
+      <div class="payment-methods">
+        <span class="payment-label">{t("pricing.paymentLabel", locale)}</span>
+        <div class="payment-icons">
+          <span class="payment-badge">{t("pricing.paymentCards", locale)}</span>
+          <span class="payment-badge">{t("pricing.paymentSpei", locale)}</span>
+          <span class="payment-badge">{t("pricing.paymentOxxo", locale)}</span>
+          <span class="payment-badge">{t("pricing.paymentPaypal", locale)}</span>
+          <span class="payment-badge">{t("pricing.paymentWise", locale)}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section-border section-block">
+    <div class="container">
+      <div class="faq-header" style="text-align: center; max-width: 640px; margin: 0 auto;">
+        <div class="section-label">{t("faq.eyebrow", locale)}</div>
+        <h2 class="section-title">{t("pricing.faqTitle", locale)}</h2>
+      </div>
+      <div class="faq-grid" style="margin-top: 3rem;">
+        <div class="glass faq-card">
+          <h3>{t("faq.q1", locale)}</h3>
+          <p>{t("faq.a1", locale)}</p>
+        </div>
+        <div class="glass faq-card">
+          <h3>{t("faq.q2", locale)}</h3>
+          <p>{t("faq.a2", locale)}</p>
+        </div>
+        <div class="glass faq-card">
+          <h3>{t("faq.q4", locale)}</h3>
+          <p>{t("faq.a4", locale)}</p>
+        </div>
+        <div class="glass faq-card">
+          <h3>{t("faq.q3", locale)}</h3>
+          <p>{t("faq.a3", locale)}</p>
+        </div>
+        <div class="glass faq-card">
+          <h3>{t("faq.q5", locale)}</h3>
+          <p>{t("faq.a5", locale)}</p>
+        </div>
+        <div class="glass faq-card">
+          <h3>{t("faq.q6", locale)}</h3>
+          <p>{t("faq.a6", locale)}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style is:global>
+  .pricing-grid { display: grid; gap: 1.5rem; align-items: start; }
+  @media (min-width: 768px) { .pricing-grid { grid-template-columns: repeat(3, 1fr); } }
+  .pricing-card { padding: 2rem; border-radius: 24px; display: flex; flex-direction: column; }
+  .pricing-featured { position: relative; border-color: rgba(99,102,241,0.4); box-shadow: 0 8px 30px rgba(99,102,241,0.15); background: rgba(99,102,241,0.04); }
+  .pricing-popular {
+    position: absolute; top: -0.75rem; left: 50%; transform: translateX(-50%);
+    padding: 0.3rem 1.25rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em; background: var(--c-indigo); color: #fff; white-space: nowrap;
+  }
+  .pricing-name { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; }
+  .pricing-amount { font-size: 3rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.03em; line-height: 1; margin-bottom: 0.25rem; }
+  .pricing-currency { font-size: 1.25rem; vertical-align: super; opacity: 0.6; }
+  .pricing-period { font-size: 1rem; font-weight: 400; color: var(--text-muted); margin-left: 0.25rem; }
+  .pricing-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+  .pricing-features { list-style: none; margin: 1.5rem 0; display: flex; flex-direction: column; gap: 0.6rem; }
+  .pricing-features li { font-size: 0.9rem; color: var(--text-secondary); }
+  .pricing-card .btn-primary, .pricing-card .btn-secondary { margin-top: auto; }
+
+  /* Payment methods */
+  .payment-methods { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.75rem; padding: 1rem 0; }
+  .payment-label { font-size: 0.85rem; color: var(--text-muted); }
+  .payment-icons { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .payment-badge { padding: 0.35rem 0.75rem; border-radius: 10px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: var(--text-secondary); }
+
+  /* FAQ */
+  .faq-card { padding: 1.5rem; border-radius: 20px; }
+  .faq-card h3 { font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+  .faq-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+  .faq-grid { display: grid; gap: 1rem; max-width: 800px; margin: 0 auto; }
+  @media (min-width: 640px) { .faq-grid { grid-template-columns: 1fr 1fr; } }
+</style>
+
+<script>
+  document.querySelectorAll(".stripe-checkout").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const plan = btn.dataset.plan;
+      btn.disabled = true;
+      btn.textContent = "Redirigiendo…";
+      try {
+        const res = await fetch("http://localhost:8787/api/create-checkout-session", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tutor: "mauricio", plan }),
+        });
+        const { url } = await res.json();
+        if (url) window.location.href = url;
+        else throw new Error("No checkout URL");
+      } catch (err) {
+        alert("Algo salió mal. Intenta de nuevo.");
+        console.error(err);
+        btn.disabled = false;
+        btn.textContent = "Intentar de nuevo";
+      }
+    });
+  });
+</script>

@@ -1,0 +1,86 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { t } from "@/i18n/utils.ts";
+
+const locale = "es";
+---
+
+<BaseLayout title={t("about.pageTitle", locale)} description={t("about.subtitle", locale)}>
+  <section class="page-header">
+    <div class="container">
+      <div class="section-label">{t("about.sectionLabel", locale)}</div>
+      <h1>{t("about.title", locale)}</h1>
+      <p>{t("about.subtitle", locale)}</p>
+    </div>
+  </section>
+
+  <section class="section-block" style="padding-top: 2rem;">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-photo-col">
+          <img src="https://avatars.githubusercontent.com/u/282408621?v=4" alt="Mauricio Tellez" class="about-photo" width="360" height="450" />
+          <div class="glass about-photo-badge">
+            <div class="badge-label">{t("about.badgeLabel1", locale)}</div>
+            <div class="badge-value">{t("about.badgeLabel2", locale)}</div>
+          </div>
+        </div>
+        <div class="about-text">
+          <div class="section-label">{t("about.backgroundLabel", locale)}</div>
+          <h2 class="section-title">{t("about.headline", locale)}</h2>
+          
+          <p class="about-p">{t("about.p1", locale)}</p>
+          
+          <p class="about-p">{t("about.p2", locale)}</p>
+
+          <div class="about-highlight">
+            <strong>{t("about.highlightBold", locale)}</strong>
+            <span>{t("about.highlightText", locale)}</span>
+          </div>
+
+          <!-- Teaching Philosophy -->
+          <div style="margin-top: 2.5rem;">
+            <div class="section-label">{t("about.approachLabel", locale)}</div>
+            <h3 class="about-h3">{t("about.approachTitle", locale)}</h3>
+            <p class="about-p">{t("about.approachDesc", locale)}</p>
+          </div>
+
+          <!-- Good fit if -->
+          <div style="margin-top: 2.5rem;">
+            <div class="section-label">{t("about.fitLabel", locale)}</div>
+            <ul class="about-fit-list">
+              <li>{t("about.fit1", locale)}</li>
+              <li>{t("about.fit2", locale)}</li>
+              <li>{t("about.fit3", locale)}</li>
+              <li>{t("about.fit4", locale)}</li>
+              <li>{t("about.fit5", locale)}</li>
+            </ul>
+          </div>
+
+          <a href={`/${locale}/book`} class="btn-primary" style="margin-top: 1.5rem;">{t("about.ctaBtn", locale)}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style is:global>
+  .about-grid { display: grid; gap: 3rem; align-items: start; }
+  @media (min-width: 768px) { .about-grid { grid-template-columns: 360px 1fr; } }
+  .about-photo-col { position: relative; display: flex; flex-direction: column; align-items: center; }
+  .about-photo { width: 320px; height: 400px; border-radius: 32px; object-fit: cover; box-shadow: var(--shadow-card); }
+  .about-photo-badge { margin-top: 1.5rem; padding: 0.75rem 1.25rem; border-radius: 16px; text-align: center; width: 100%; max-width: 320px; }
+  .about-photo-badge .badge-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .about-photo-badge .badge-value { font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-top: 0.1rem; }
+  .about-text { max-width: 600px; }
+  .about-p { font-size: 1rem; color: var(--text-secondary); line-height: 1.8; margin-top: 1.25rem; }
+  .about-h3 { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-top: 0.5rem; }
+  .about-highlight {
+    margin-top: 1.5rem; padding: 1rem 1.25rem; border-radius: 16px;
+    background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.15);
+    display: flex; flex-direction: column; gap: 0.2rem;
+  }
+  .about-highlight strong { font-size: 0.95rem; color: var(--text-primary); }
+  .about-highlight span { font-size: 0.85rem; color: var(--text-muted); }
+  .about-fit-list { list-style: none; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.6rem; }
+  .about-fit-list li { font-size: 0.95rem; color: var(--text-secondary); }
+</style>

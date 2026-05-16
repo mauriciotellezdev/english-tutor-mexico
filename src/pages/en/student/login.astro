@@ -1,0 +1,199 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { t } from "@/i18n/utils.ts";
+
+const locale = "en";
+---
+
+<BaseLayout title={t("student.login.pageTitle", locale)} description={t("student.login.subtitle", locale)}>
+  <section class="auth-page">
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1>{t("student.login.heading", locale)}</h1>
+          <p>{t("student.login.subtitle", locale)}</p>
+        </div>
+
+        <div id="login-status" class="auth-status" style="display: none;"></div>
+
+        <form id="login-form" class="auth-form">
+          <div class="form-group">
+            <label for="login-email">{t("student.login.emailLabel", locale)}</label>
+            <input
+              type="email"
+              id="login-email"
+              name="email"
+              placeholder={t("student.login.emailPlaceholder", locale)}
+              required
+              autocomplete="email"
+            />
+          </div>
+
+          <button type="submit" id="login-btn" class="auth-btn-primary">
+            <span class="btn-text">{t("student.login.submitBtn", locale)}</span>
+            <span class="btn-loading" style="display: none;">{t("student.login.loadingBtn", locale)}</span>
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          {t("student.login.noAccount", locale)} <a href={`/${locale}/book`}>{t("student.login.createAccountLink", locale)}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import { supabase } from '@/lib/supabase';
+
+  const form = document.getElementById('login-form');
+  const btn = document.getElementById('login-btn');
+  const btnText = btn?.querySelector('.btn-text');
+  const btnLoading = btn?.querySelector('.btn-loading');
+  const status = document.getElementById('login-status');
+
+  // Check if already logged in
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (session) {
+      window.location.href = '/student/dashboard';
+    }
+  });
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const emailInput = document.getElementById('login-email') as HTMLInputElement;
+    const email = emailInput?.value.trim();
+
+    if (!email) {
+      showStatus('Please enter your email address.', 'error');
+      return;
+    }
+
+    if (btnText) btnText.style.display = 'none';
+    if (btnLoading) btnLoading.style.display = 'block';
+    if (btn) btn.disabled = true;
+
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/student/callback`,
+        },
+      });
+
+      if (error) throw error;
+
+      showStatus(
+        `Magic link sent to ${email}! Check your inbox (and spam) and click the link to sign in.`,
+        'success'
+      );
+      form.reset();
+    } catch (err: any) {
+      showStatus(err.message || 'Something went wrong. Please try again.', 'error');
+    } finally {
+      if (btnText) btnText.style.display = 'block';
+      if (btnLoading) btnLoading.style.display = 'none';
+      if (btn) btn.disabled = false;
+    }
+  });
+
+  function showStatus(message: string, type: 'success' | 'error') {
+    if (!status) return;
+    status.textContent = message;
+    status.className = `auth-status auth-status-${type}`;
+    status.style.display = 'block';
+  }
+</script>
+
+<style is:global>
+  .auth-page {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+  }
+  .auth-container { width: 100%; max-width: 440px; }
+  .auth-card {
+    padding: 2.5rem;
+    border-radius: 24px;
+    background: rgba(15,23,42,0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .auth-header h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.5rem;
+  }
+  .auth-header p {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+  .auth-form { display: flex; flex-direction: column; gap: 1.25rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-group label { font-size: 0.85rem; font-weight: 600; color: #cbd5e1; }
+  .form-group input {
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    font-size: 0.95rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus { border-color: #6366f1; }
+  .form-group input::placeholder { color: #64748b; }
+  .auth-btn-primary {
+    padding: 0.875rem 1.5rem;
+    border-radius: 14px;
+    background: #6366f1;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    margin-top: 0.5rem;
+  }
+  .auth-btn-primary:hover { background: #818cf8; }
+  .auth-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+  .auth-status {
+    padding: 0.875rem 1rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+  .auth-status-success {
+    background: rgba(52,211,153,0.1);
+    border: 1px solid rgba(52,211,153,0.2);
+    color: #34d399;
+  }
+  .auth-status-error {
+    background: rgba(248,113,113,0.1);
+    border: 1px solid rgba(248,113,113,0.2);
+    color: #f87171;
+  }
+  .auth-footer {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #94a3b8;
+  }
+  .auth-footer a { color: #818cf8; font-weight: 500; }
+  .auth-footer a:hover { color: #a5b4fc; }
+
+  @media (width <= 640px) {
+    .auth-card { padding: 1.75rem; }
+  }
+</style>

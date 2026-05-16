@@ -566,4 +566,169 @@ export const translations: Record<string, { en: string; es: string }> = {
   "tg.notes.b2.n2": { en: "Persuasion", es: "Persuasión" },
   "tg.notes.b2.n3": { en: "Leadership", es: "Liderazgo" },
   "tg.notes.b2.n4": { en: "Technical and cultural fluency", es: "Fluidez técnica y cultural" },
+
+  // ============================================================
+  // COMMON (shared across student/teacher portals)
+  // ============================================================
+  "common.signOut": { en: "Sign out", es: "Cerrar sesión" },
+  "common.cancel": { en: "Cancel", es: "Cancelar" },
+  "common.errorGeneric": { en: "Something went wrong. Please try again.", es: "Algo salió mal. Inténtalo de nuevo." },
+  "common.errorGenericShort": { en: "Something went wrong.", es: "Algo salió mal." },
+  "common.tryAgain": { en: "Try Again", es: "Intentar de nuevo" },
+
+  // ============================================================
+  // STUDENT — SIGNUP
+  // ============================================================
+  "student.signup.pageTitle": { en: "Sign Up | English Immersion", es: "Registrarse | Inmersión en Inglés" },
+  "student.signup.heading": { en: "Create your account", es: "Crea tu cuenta" },
+  "student.signup.subtitle": { en: "Start speaking English with confidence. No password needed — just your email.", es: "Empieza a hablar inglés con confianza. Sin contraseña — solo tu email." },
+  "student.signup.nameLabel": { en: "Your name", es: "Tu nombre" },
+  "student.signup.namePlaceholder": { en: "e.g. María García", es: "ej. María García" },
+  "student.signup.emailLabel": { en: "Email address", es: "Correo electrónico" },
+  "student.signup.emailPlaceholder": { en: "maria@email.com", es: "maria@email.com" },
+  "student.signup.refCodeLabel": { en: "Referral code", es: "Código de referencia" },
+  "student.signup.refCodePlaceholder": { en: "QR code (auto-filled)", es: "Código QR (autocompletado)" },
+  "student.signup.refCodeHint": { en: "This gives you 50% off your first 5 lessons!", es: "¡Esto te da 50% de descuento en tus primeras 5 clases!" },
+  "student.signup.submitBtn": { en: "Create Account", es: "Crear Cuenta" },
+  "student.signup.loadingBtn": { en: "Sending magic link...", es: "Enviando enlace mágico..." },
+  "student.signup.haveAccount": { en: "Already have an account?", es: "¿Ya tienes una cuenta?" },
+  "student.signup.signInLink": { en: "Sign in", es: "Iniciar sesión" },
+  "student.signup.errorRequiredFields": { en: "Please fill in all required fields.", es: "Por favor completa todos los campos requeridos." },
+  "student.signup.successMagicLink": { en: "Magic link sent to {email}! Check your inbox (and spam) and click the link to sign in.", es: "¡Enlace mágico enviado a {email}! Revisa tu bandeja (y spam) y haz clic en el enlace para iniciar sesión." },
+
+  // ============================================================
+  // STUDENT — LOGIN
+  // ============================================================
+  "student.login.pageTitle": { en: "Sign In | English Immersion", es: "Iniciar Sesión | Inmersión en Inglés" },
+  "student.login.heading": { en: "Sign in", es: "Iniciar sesión" },
+  "student.login.subtitle": { en: "Enter your email and we'll send you a magic link. No password needed.", es: "Ingresa tu email y te enviaremos un enlace mágico. Sin contraseña." },
+  "student.login.emailLabel": { en: "Email address", es: "Correo electrónico" },
+  "student.login.emailPlaceholder": { en: "maria@email.com", es: "maria@email.com" },
+  "student.login.submitBtn": { en: "Send Magic Link", es: "Enviar Enlace Mágico" },
+  "student.login.loadingBtn": { en: "Sending magic link...", es: "Enviando enlace mágico..." },
+  "student.login.noAccount": { en: "Don't have an account?", es: "¿No tienes una cuenta?" },
+  "student.login.createAccountLink": { en: "Create one", es: "Crear una" },
+  "student.login.errorNoEmail": { en: "Please enter your email address.", es: "Por favor ingresa tu correo electrónico." },
+  "student.login.successMagicLink": { en: "Magic link sent to {email}! Check your inbox (and spam) and click the link to sign in.", es: "¡Enlace mágico enviado a {email}! Revisa tu bandeja (y spam) y haz clic en el enlace para iniciar sesión." },
+
+  // ============================================================
+  // STUDENT — CALLBACK
+  // ============================================================
+  "student.callback.pageTitle": { en: "Signing in... | English Immersion", es: "Iniciando sesión... | Inmersión en Inglés" },
+  "student.callback.defaultTitle": { en: "Signing you in...", es: "Iniciando tu sesión..." },
+  "student.callback.defaultDesc": { en: "Please wait while we verify your magic link.", es: "Espera mientras verificamos tu enlace mágico." },
+  "student.callback.errorTitle": { en: "Sign in failed", es: "Error al iniciar sesión" },
+  "student.callback.errorInvalidLink": { en: "Invalid or expired magic link. Please request a new one.", es: "Enlace mágico inválido o expirado. Solicita uno nuevo." },
+  "student.callback.successTitle": { en: "Welcome!", es: "¡Bienvenido!" },
+  "student.callback.successDesc": { en: "Redirecting to your dashboard...", es: "Redirigiendo a tu panel..." },
+
+  // ============================================================
+  // STUDENT — DASHBOARD
+  // ============================================================
+  "student.dashboard.pageTitle": { en: "My Dashboard | English Immersion", es: "Mi Panel | Inmersión en Inglés" },
+  "student.dashboard.welcomeDefault": { en: "Welcome!", es: "¡Bienvenido!" },
+  "student.dashboard.welcomeNamed": { en: "Welcome, {name}!", es: "¡Bienvenido, {name}!" },
+  "student.dashboard.loadingLevel": { en: "Loading...", es: "Cargando..." },
+  "student.dashboard.loadingText": { en: "Loading your dashboard...", es: "Cargando tu panel..." },
+  "student.dashboard.levelTbd": { en: "Level TBD", es: "Nivel por definir" },
+  "student.dashboard.levelTbdFirst": { en: "Level TBD — assessed after first session", es: "Nivel por definir — evaluado después de la primera sesión" },
+  "student.dashboard.discountTitle": { en: "QR Code Discount Active", es: "Descuento por Código QR Activo" },
+  "student.dashboard.discountDefaultDesc": { en: "50% off for 5 sessions", es: "50% de descuento por 5 sesiones" },
+  "student.dashboard.discountDynamicTitle": { en: "{percent}% Off — {total} Sessions", es: "{percent}% de descuento — {total} Sesiones" },
+  "student.dashboard.discountDynamicDesc": { en: "Remaining: {remaining} of {total} sessions", es: "Restantes: {remaining} de {total} sesiones" },
+  "student.dashboard.progressDefault": { en: "0/5 used", es: "0/5 usadas" },
+  "student.dashboard.progressDynamic": { en: "{used}/{total} used", es: "{used}/{total} usadas" },
+  "student.dashboard.statSessions": { en: "Sessions completed", es: "Sesiones completadas" },
+  "student.dashboard.statLevel": { en: "Current level", es: "Nivel actual" },
+  "student.dashboard.statNextSession": { en: "Next session", es: "Próxima sesión" },
+  "student.dashboard.quickActionsTitle": { en: "Quick Actions", es: "Acciones Rápidas" },
+  "student.dashboard.actionBook": { en: "Book a Session", es: "Agendar una Sesión" },
+  "student.dashboard.actionWhatsApp": { en: "Message on WhatsApp", es: "Mensaje por WhatsApp" },
+  "student.dashboard.actionGuide": { en: "Student Guide", es: "Guía del Estudiante" },
+  "student.dashboard.upcomingTitle": { en: "Upcoming Sessions", es: "Próximas Sesiones" },
+  "student.dashboard.noUpcoming": { en: "No upcoming sessions.", es: "No hay sesiones próximas." },
+  "student.dashboard.bookNowLink": { en: "Book one now", es: "Agenda una ahora" },
+  "student.dashboard.homeworkTitle": { en: "Recent Homework", es: "Tarea Reciente" },
+  "student.dashboard.noHomework": { en: "No homework assigned yet.", es: "Aún no hay tarea asignada." },
+  "student.dashboard.homeworkDone": { en: "✓ Done", es: "✓ Hecho" },
+  "student.dashboard.homeworkPending": { en: "Pending", es: "Pendiente" },
+  "student.dashboard.statusScheduled": { en: "scheduled", es: "programada" },
+  "student.dashboard.statusCompleted": { en: "completed", es: "completada" },
+  "student.dashboard.statusCancelled": { en: "cancelled", es: "cancelada" },
+
+  // ============================================================
+  // TEACHER — LOGIN
+  // ============================================================
+  "teacher.login.pageTitle": { en: "Tutor Login | English Immersion", es: "Acceso Tutor | Inmersión en Inglés" },
+  "teacher.login.heading": { en: "Tutor OS", es: "Tutor OS" },
+  "teacher.login.subtitle": { en: "Sign in with your teacher account.", es: "Inicia sesión con tu cuenta de profesor." },
+  "teacher.login.emailLabel": { en: "Email address", es: "Correo electrónico" },
+  "teacher.login.emailPlaceholder": { en: "mauricio@email.com", es: "mauricio@email.com" },
+  "teacher.login.submitBtn": { en: "Send Magic Link", es: "Enviar Enlace Mágico" },
+  "teacher.login.loadingBtn": { en: "Sending magic link...", es: "Enviando enlace mágico..." },
+  "teacher.login.backToSite": { en: "← Back to site", es: "← Volver al sitio" },
+  "teacher.login.errorNoEmail": { en: "Please enter your email address.", es: "Por favor ingresa tu correo electrónico." },
+  "teacher.login.errorTimeout": { en: "Request timed out. Please try again.", es: "La solicitud expiró. Inténtalo de nuevo." },
+  "teacher.login.errorFailedSend": { en: "Failed to send magic link", es: "Error al enviar enlace mágico" },
+  "teacher.login.successMagicLink": { en: "Magic link sent to {email}! Check your inbox and click the link.", es: "¡Enlace mágico enviado a {email}! Revisa tu bandeja y haz clic en el enlace." },
+
+  // ============================================================
+  // TEACHER — CALLBACK
+  // ============================================================
+  "teacher.callback.pageTitle": { en: "Signing in... | Tutor OS", es: "Iniciando sesión... | Tutor OS" },
+  "teacher.callback.defaultTitle": { en: "Signing you in...", es: "Iniciando tu sesión..." },
+  "teacher.callback.defaultDesc": { en: "Please wait while we verify your magic link.", es: "Espera mientras verificamos tu enlace mágico." },
+  "teacher.callback.errorTitle": { en: "Sign in failed", es: "Error al iniciar sesión" },
+  "teacher.callback.errorInvalidLink": { en: "Invalid or expired magic link. Please request a new one.", es: "Enlace mágico inválido o expirado. Solicita uno nuevo." },
+  "teacher.callback.errorProfileNotFound": { en: "Profile not found. You may need to run the SQL schema in Supabase.", es: "Perfil no encontrado. Puede que necesites ejecutar el esquema SQL en Supabase." },
+  "teacher.callback.errorAccessDenied": { en: "Access denied. Your role is \"{role}\" — needs to be \"teacher\".", es: "Acceso denegado. Tu rol es \"{role}\" — debe ser \"profesor\"." },
+  "teacher.callback.successTitle": { en: "Welcome back!", es: "¡Bienvenido de vuelta!" },
+  "teacher.callback.successDesc": { en: "Redirecting to Tutor OS...", es: "Redirigiendo a Tutor OS..." },
+
+  // ============================================================
+  // TEACHER — DASHBOARD
+  // ============================================================
+  "teacher.dashboard.pageTitle": { en: "Tutor OS | Dashboard", es: "Tutor OS | Panel" },
+  "teacher.dashboard.heading": { en: "Tutor OS", es: "Tutor OS" },
+  "teacher.dashboard.subtitle": { en: "Manage students, sessions, and QR codes.", es: "Gestiona estudiantes, sesiones y códigos QR." },
+  "teacher.dashboard.loadingText": { en: "Loading Tutor OS...", es: "Cargando Tutor OS..." },
+  "teacher.dashboard.statStudents": { en: "Active Students", es: "Estudiantes Activos" },
+  "teacher.dashboard.statSessionsWeek": { en: "Sessions This Week", es: "Sesiones Esta Semana" },
+  "teacher.dashboard.statQrScans": { en: "QR Scans", es: "Escaneos QR" },
+  "teacher.dashboard.statQrSignups": { en: "Signups from QR", es: "Registros desde QR" },
+  "teacher.dashboard.tabStudents": { en: "Students", es: "Estudiantes" },
+  "teacher.dashboard.tabSessions": { en: "Sessions", es: "Sesiones" },
+  "teacher.dashboard.tabQrCodes": { en: "QR Codes", es: "Códigos QR" },
+  "teacher.dashboard.studentsTitle": { en: "Students", es: "Estudiantes" },
+  "teacher.dashboard.noStudents": { en: "No students yet.", es: "Aún no hay estudiantes." },
+  "teacher.dashboard.upcomingTitle": { en: "Upcoming Sessions", es: "Próximas Sesiones" },
+  "teacher.dashboard.noUpcoming": { en: "No upcoming sessions.", es: "No hay sesiones próximas." },
+  "teacher.dashboard.qrCampaignsTitle": { en: "QR Campaigns", es: "Campañas QR" },
+  "teacher.dashboard.newCampaignBtn": { en: "+ New Campaign", es: "+ Nueva Campaña" },
+  "teacher.dashboard.createQrTitle": { en: "Create QR Campaign", es: "Crear Campaña QR" },
+  "teacher.dashboard.campaignNameLabel": { en: "Campaign Name", es: "Nombre de Campaña" },
+  "teacher.dashboard.campaignNamePlaceholder": { en: "e.g. Flyer — Language School CDMX", es: "ej. Flyer — Escuela de Idiomas CDMX" },
+  "teacher.dashboard.refCodeLabel": { en: "Ref Code", es: "Código de Referencia" },
+  "teacher.dashboard.refCodePlaceholder": { en: "e.g. qr-flyer-002", es: "ej. qr-flyer-002" },
+  "teacher.dashboard.discountPercentLabel": { en: "Discount %", es: "Descuento %" },
+  "teacher.dashboard.discountSessionsLabel": { en: "Discount Sessions", es: "Sesiones de Descuento" },
+  "teacher.dashboard.descriptionLabel": { en: "Description", es: "Descripción" },
+  "teacher.dashboard.descriptionPlaceholder": { en: "Optional description", es: "Descripción opcional" },
+  "teacher.dashboard.createCampaignBtn": { en: "Create Campaign", es: "Crear Campaña" },
+  "teacher.dashboard.noQrCampaigns": { en: "No QR campaigns yet.", es: "Aún no hay campañas QR." },
+  "teacher.dashboard.unnamedStudent": { en: "Unnamed", es: "Sin nombre" },
+  "teacher.dashboard.unknownStudent": { en: "Unknown", es: "Desconocido" },
+  "teacher.dashboard.btnComplete": { en: "Complete", es: "Completar" },
+  "teacher.dashboard.qrStatScans": { en: "scans", es: "escaneos" },
+  "teacher.dashboard.qrStatDiscount": { en: "discount", es: "descuento" },
+  "teacher.dashboard.qrStatSessions": { en: "sessions", es: "sesiones" },
+  "teacher.dashboard.btnDownloadQr": { en: "Download QR", es: "Descargar QR" },
+  "teacher.dashboard.btnDeactivate": { en: "Deactivate", es: "Desactivar" },
+  "teacher.dashboard.btnActivate": { en: "Activate", es: "Activar" },
+  "teacher.dashboard.errorFillCampaign": { en: "Please fill in the campaign name and ref code.", es: "Por favor completa el nombre de campaña y el código de referencia." },
+  "teacher.dashboard.errorCreateCampaign": { en: "Error creating campaign: ", es: "Error al crear campaña: " },
+  "teacher.dashboard.sessionStatusScheduled": { en: "Scheduled", es: "Programada" },
+  "teacher.dashboard.sessionStatusCompleted": { en: "Completed", es: "Completada" },
+  "teacher.dashboard.sessionStatusCancelled": { en: "Cancelled", es: "Cancelada" },
+  "teacher.dashboard.sessionStatusNoShow": { en: "No Show", es: "No Asistió" },
 };

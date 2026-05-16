@@ -1,0 +1,472 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="My Dashboard | English Immersion" description="Your English learning dashboard.">
+  <section class="dashboard-page">
+    <div class="dashboard-container">
+      <!-- Header -->
+      <div class="dashboard-header">
+        <div>
+          <h1 id="welcome-msg">Welcome!</h1>
+          <p id="level-badge" class="level-badge">Loading...</p>
+        </div>
+        <button id="logout-btn" class="logout-btn">Sign out</button>
+      </div>
+
+      <!-- Loading state -->
+      <div id="dashboard-loading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading your dashboard...</p>
+      </div>
+
+      <!-- Dashboard content (hidden until loaded) -->
+      <div id="dashboard-content" style="display: none;">
+        <!-- Discount Banner -->
+        <div id="discount-banner" class="discount-banner" style="display: none;">
+          <div class="discount-icon">🎉</div>
+          <div class="discount-info">
+            <h3 id="discount-title">QR Code Discount Active</h3>
+            <p id="discount-desc">50% off for 5 sessions</p>
+            <div class="discount-progress">
+              <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill" style="width: 0%;"></div>
+              </div>
+              <span id="progress-text" class="progress-text">0/5 used</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(99,102,241,0.12); color: #818cf8;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <div>
+              <div class="stat-value" id="stat-sessions">0</div>
+              <div class="stat-label">Sessions completed</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(52,211,153,0.12); color: #34d399;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            </div>
+            <div>
+              <div class="stat-value" id="stat-level">—</div>
+              <div class="stat-label">Current level</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(6,182,212,0.12); color: #22d3ee;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div>
+              <div class="stat-value" id="stat-next">—</div>
+              <div class="stat-label">Next session</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <h2>Quick Actions</h2>
+          <div class="actions-grid">
+            <a href="/book" class="action-card">
+              <span class="action-icon">📅</span>
+              <span>Book a Session</span>
+            </a>
+            <a href="https://wa.me/5212251118581" target="_blank" rel="noopener" class="action-card">
+              <span class="action-icon">💬</span>
+              <span>Message on WhatsApp</span>
+            </a>
+            <a href="/student-guide" class="action-card">
+              <span class="action-icon">📖</span>
+              <span>Student Guide</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Upcoming Sessions -->
+        <div class="dashboard-section">
+          <h2>Upcoming Sessions</h2>
+          <div id="upcoming-sessions" class="session-list">
+            <p class="empty-state">No upcoming sessions. <a href="/book">Book one now</a>.</p>
+          </div>
+        </div>
+
+        <!-- Recent Homework -->
+        <div class="dashboard-section">
+          <h2>Recent Homework</h2>
+          <div id="recent-homework" class="homework-list">
+            <p class="empty-state">No homework assigned yet.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import { supabase } from '@/lib/supabase';
+
+  // Check auth
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    window.location.href = '/student/login';
+  }
+
+  // Load dashboard data
+  async function loadDashboard() {
+    if (!session) return;
+
+    // Get profile
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', session.user.id)
+      .single();
+
+    // Get discount
+    const { data: discount } = await supabase
+      .from('student_discounts')
+      .select('*, qr_campaigns(name)')
+      .eq('student_id', session.user.id)
+      .eq('is_active', true)
+      .single();
+
+    // Get completed sessions count
+    const { count: completedCount } = await supabase
+      .from('sessions')
+      .select('*', { count: 'exact', head: true })
+      .eq('student_id', session.user.id)
+      .eq('status', 'completed');
+
+    // Get upcoming sessions
+    const { data: upcomingSessions } = await supabase
+      .from('sessions')
+      .select('*')
+      .eq('student_id', session.user.id)
+      .eq('status', 'scheduled')
+      .gte('scheduled_at', new Date().toISOString())
+      .order('scheduled_at', { ascending: true })
+      .limit(3);
+
+    // Get recent homework
+    const { data: recentHomework } = await supabase
+      .from('homework')
+      .select('*')
+      .eq('student_id', session.user.id)
+      .order('assigned_at', { ascending: false })
+      .limit(3);
+
+    // Update UI
+    const loading = document.getElementById('dashboard-loading');
+    const content = document.getElementById('dashboard-content');
+    if (loading) loading.style.display = 'none';
+    if (content) content.style.display = 'block';
+
+    // Welcome message
+    const welcomeMsg = document.getElementById('welcome-msg');
+    if (welcomeMsg && profile?.full_name) {
+      welcomeMsg.textContent = `Welcome, ${profile.full_name.split(' ')[0]}!`;
+    }
+
+    // Level badge
+    const levelBadge = document.getElementById('level-badge');
+    if (levelBadge) {
+      const levelNames: Record<string, string> = {
+        a0: 'A0 — Survival English',
+        a1: 'A1 — Basic Conversation',
+        a2: 'A2 — Everyday English',
+        b1: 'B1 — Professional English',
+        b2: 'B2+ — Advanced / Tech Fluency',
+      };
+      levelBadge.textContent = profile?.current_level
+        ? levelNames[profile.current_level] || 'Level TBD'
+        : 'Level TBD — assessed after first session';
+    }
+
+    // Discount banner
+    if (discount) {
+      const banner = document.getElementById('discount-banner');
+      if (banner) banner.style.display = 'flex';
+      const title = document.getElementById('discount-title');
+      if (title) title.textContent = `${discount.discount_percent}% Off — ${discount.total_sessions} Sessions`;
+      const desc = document.getElementById('discount-desc');
+      if (desc) desc.textContent = `Remaining: ${discount.remaining_sessions} of ${discount.total_sessions} sessions`;
+      const fill = document.getElementById('progress-fill');
+      if (fill) fill.style.width = `${(discount.used_sessions / discount.total_sessions) * 100}%`;
+      const progressText = document.getElementById('progress-text');
+      if (progressText) progressText.textContent = `${discount.used_sessions}/${discount.total_sessions} used`;
+    }
+
+    // Stats
+    const statSessions = document.getElementById('stat-sessions');
+    if (statSessions) statSessions.textContent = String(completedCount || 0);
+    const statLevel = document.getElementById('stat-level');
+    if (statLevel) statLevel.textContent = (profile?.current_level || '—').toUpperCase();
+    const statNext = document.getElementById('stat-next');
+    if (statNext) {
+      if (upcomingSessions && upcomingSessions.length > 0) {
+        const next = new Date(upcomingSessions[0].scheduled_at);
+        statNext.textContent = next.toLocaleDateString('en-MX', { month: 'short', day: 'numeric' });
+      } else {
+        statNext.textContent = '—';
+      }
+    }
+
+    // Upcoming sessions
+    const upcomingEl = document.getElementById('upcoming-sessions');
+    if (upcomingEl) {
+      if (upcomingSessions && upcomingSessions.length > 0) {
+        upcomingEl.innerHTML = upcomingSessions.map((s: any) => `
+          <div class="session-item">
+            <div class="session-date">
+              ${new Date(s.scheduled_at).toLocaleDateString('en-MX', { weekday: 'short', month: 'short', day: 'numeric' })}
+            </div>
+            <div class="session-time">
+              ${new Date(s.scheduled_at).toLocaleTimeString('en-MX', { hour: '2-digit', minute: '2-digit' })}
+            </div>
+            <div class="session-status status-${s.status}">${s.status}</div>
+          </div>
+        `).join('');
+      }
+    }
+
+    // Recent homework
+    const homeworkEl = document.getElementById('recent-homework');
+    if (homeworkEl) {
+      if (recentHomework && recentHomework.length > 0) {
+        homeworkEl.innerHTML = recentHomework.map((h: any) => `
+          <div class="homework-item ${h.is_completed ? 'completed' : ''}">
+            <div class="homework-desc">${h.description}</div>
+            <div class="homework-status">${h.is_completed ? '✓ Done' : 'Pending'}</div>
+          </div>
+        `).join('');
+      }
+    }
+  }
+
+  // Logout
+  document.getElementById('logout-btn')?.addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/';
+  });
+
+  loadDashboard();
+</script>
+
+<style is:global>
+  .dashboard-page { padding: 2rem 1.5rem 4rem; }
+  .dashboard-container { max-width: 800px; margin: 0 auto; }
+  .dashboard-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+  }
+  .dashboard-header h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.25rem;
+  }
+  .level-badge {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #a5b4fc;
+    background: rgba(99,102,241,0.1);
+    border: 1px solid rgba(99,102,241,0.2);
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    display: inline-block;
+  }
+  .logout-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .logout-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .loading-state {
+    text-align: center;
+    padding: 4rem 0;
+    color: #94a3b8;
+  }
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: #6366f1;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 1rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Discount Banner */
+  .discount-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    border-radius: 16px;
+    background: rgba(52,211,153,0.08);
+    border: 1px solid rgba(52,211,153,0.2);
+    margin-bottom: 2rem;
+  }
+  .discount-icon { font-size: 2rem; }
+  .discount-info h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #34d399;
+    margin-bottom: 0.25rem;
+  }
+  .discount-info p {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+  }
+  .discount-progress { display: flex; align-items: center; gap: 0.75rem; }
+  .progress-bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #34d399;
+    border-radius: 999px;
+    transition: width 0.3s;
+  }
+  .progress-text { font-size: 0.8rem; color: #94a3b8; white-space: nowrap; }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .stat-card {
+    padding: 1.25rem;
+    border-radius: 16px;
+    background: rgba(15,23,42,0.65);
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .stat-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .stat-icon svg { width: 1.25rem; height: 1.25rem; }
+  .stat-value { font-size: 1.5rem; font-weight: 800; color: #fff; line-height: 1; }
+  .stat-label { font-size: 0.8rem; color: #64748b; margin-top: 0.2rem; }
+
+  /* Quick Actions */
+  .quick-actions { margin-bottom: 2rem; }
+  .quick-actions h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+  .actions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+  .action-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    border-radius: 16px;
+    background: rgba(15,23,42,0.65);
+    border: 1px solid rgba(255,255,255,0.08);
+    text-decoration: none !important;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .action-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,0.12);
+  }
+  .action-icon { font-size: 1.5rem; }
+
+  /* Dashboard Sections */
+  .dashboard-section { margin-bottom: 2rem; }
+  .dashboard-section h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+  .session-list, .homework-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .session-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.875rem 1rem;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .session-date { font-size: 0.9rem; color: #fff; font-weight: 600; }
+  .session-time { font-size: 0.85rem; color: #94a3b8; }
+  .session-status {
+    margin-left: auto;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+  }
+  .status-scheduled { background: rgba(99,102,241,0.15); color: #818cf8; }
+  .status-completed { background: rgba(52,211,153,0.15); color: #34d399; }
+  .status-cancelled { background: rgba(248,113,113,0.15); color: #f87171; }
+  .homework-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1rem;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .homework-item.completed { opacity: 0.6; }
+  .homework-desc { font-size: 0.9rem; color: #cbd5e1; }
+  .homework-status { font-size: 0.8rem; color: #64748b; font-weight: 500; }
+  .empty-state {
+    font-size: 0.9rem;
+    color: #64748b;
+    padding: 1rem;
+  }
+  .empty-state a { color: #818cf8; }
+
+  @media (width <= 640px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .actions-grid { grid-template-columns: 1fr; }
+    .dashboard-header { flex-direction: column; gap: 1rem; }
+  }
+</style>

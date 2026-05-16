@@ -1,13 +1,16 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { t } from "@/i18n/utils.ts";
+
+const locale = "en";
 ---
 
-<BaseLayout title="Pricing | AI-Assisted English Immersion" description="Simple pricing for AI-assisted conversational English immersion. Pay in Mexican Pesos (MXN). No hidden fees. Cancel anytime.">
+<BaseLayout title={t("pricing.pageTitle", locale)} description={t("pricing.subtitle", locale)}>
   <section class="page-header">
     <div class="container">
-      <div class="section-label">Pricing</div>
-      <h1>Simple pricing, real results</h1>
-      <p>Pay in Mexican Pesos (MXN). No hidden fees. Cancel anytime.</p>
+      <div class="section-label">{t("pricing.sectionLabel", locale)}</div>
+      <h1>{t("pricing.title", locale)}</h1>
+      <p>{t("pricing.subtitle", locale)}</p>
     </div>
   </section>
 
@@ -16,57 +19,57 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
       <div class="pricing-grid">
         <!-- TRIAL LESSON -->
         <div class="glass pricing-card">
-          <div class="pricing-name">Trial Session</div>
+          <div class="pricing-name">{t("pricing.trialName", locale)}</div>
           <div class="pricing-amount">
             <span class="pricing-currency">$</span>400
-            <span class="pricing-period">MXN</span>
+            <span class="pricing-period">{t("pricing.trialPeriod", locale)}</span>
           </div>
-          <div class="pricing-sub">60-minute conversational session</div>
+          <div class="pricing-sub">{t("pricing.trialDesc", locale)}</div>
           <ul class="pricing-features">
-            <li>✓ Conversation-first approach</li>
-            <li>✓ Google Meet or Zoom</li>
-            <li>✓ AI-assisted when needed</li>
-            <li>✓ Pay as you go</li>
+            <li>{t("pricing.trialFeature1", locale)}</li>
+            <li>{t("pricing.trialFeature2", locale)}</li>
+            <li>{t("pricing.trialFeature3", locale)}</li>
+            <li>{t("pricing.trialFeature4", locale)}</li>
           </ul>
           <button class="btn-primary stripe-checkout" data-plan="single" style="width: 100%; justify-content: center;">
-            Book Trial Session
+            {t("pricing.trialBtn", locale)}
           </button>
         </div>
 
         <!-- MOST POPULAR - 10 LESSON PACKAGE -->
         <div class="glass pricing-card pricing-featured">
-          <div class="pricing-popular">Most Popular</div>
-          <div class="pricing-name">10 Session Package</div>
+          <div class="pricing-popular">{t("pricing.popular", locale)}</div>
+          <div class="pricing-name">{t("pricing.packName", locale)}</div>
           <div class="pricing-amount">
             <span class="pricing-currency">$</span>3,000
-            <span class="pricing-period">MXN</span>
+            <span class="pricing-period">{t("pricing.packPeriod", locale)}</span>
           </div>
-          <div class="pricing-sub">$300/session — Save $1,000</div>
+          <div class="pricing-sub">{t("pricing.packDesc", locale)}</div>
           <ul class="pricing-features">
-            <li>✓ Personalized conversation plan</li>
-            <li>✓ Flexible scheduling</li>
-            <li>✓ Speaking-focused sessions</li>
-            <li>✓ Real-world topics & roleplay</li>
-            <li>✓ Ongoing progress tracking</li>
+            <li>{t("pricing.packFeature1", locale)}</li>
+            <li>{t("pricing.packFeature2", locale)}</li>
+            <li>{t("pricing.packFeature3", locale)}</li>
+            <li>{t("pricing.packFeature4", locale)}</li>
+            <li>{t("pricing.packFeature5", locale)}</li>
           </ul>
           <button class="btn-primary stripe-checkout" data-plan="pack10" style="width: 100%; justify-content: center;">
-            Buy 10 Session Package
+            {t("pricing.packBtn", locale)}
           </button>
         </div>
 
         <!-- FREE CONSULTATION -->
         <div class="glass pricing-card">
-          <div class="pricing-name">Free Consultation</div>
+          <div class="pricing-name">{t("book.title", locale)}</div>
           <div class="pricing-amount" style="font-size: 2.5rem;">$0</div>
-          <div class="pricing-sub">20-minute video call</div>
+          <div class="pricing-sub">{t("book.calendlySub", locale)}</div>
           <ul class="pricing-features">
-            <li>✓ Discuss your goals</li>
-            <li>✓ Assess your level</li>
-            <li>✓ No obligation</li>
-            <li>✓ Meet your coach</li>
+            <li>{t("pricing.freeFeature1", locale)}</li>
+            <li>{t("pricing.freeFeature2", locale)}</li>
+            <li>{t("pricing.freeFeature3", locale)}</li>
+            <li>{t("pricing.freeFeature4", locale)}</li>
           </ul>
-          <a href="/book" class="btn-secondary" style="width: 100%; justify-content: center; display: flex;">
-            Book Free Consultation
+          <a href={`/${locale}/book`} class="btn-secondary" style="width: 100%; justify-content: center; display: flex;">
+            {t("about.ctaBtn", locale)}
           </a>
         </div>
       </div>
@@ -77,13 +80,13 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
   <section class="section-border section-block" style="padding-top: 2rem; padding-bottom: 0;">
     <div class="container">
       <div class="payment-methods">
-        <span class="payment-label">Accepted payment methods:</span>
+        <span class="payment-label">{t("pricing.paymentLabel", locale)}</span>
         <div class="payment-icons">
-          <span class="payment-badge">💳 Cards</span>
-          <span class="payment-badge">🏦 SPEI</span>
-          <span class="payment-badge">📱 OXXO</span>
-          <span class="payment-badge">🌐 PayPal</span>
-          <span class="payment-badge">💱 Wise</span>
+          <span class="payment-badge">{t("pricing.paymentCards", locale)}</span>
+          <span class="payment-badge">{t("pricing.paymentSpei", locale)}</span>
+          <span class="payment-badge">{t("pricing.paymentOxxo", locale)}</span>
+          <span class="payment-badge">{t("pricing.paymentPaypal", locale)}</span>
+          <span class="payment-badge">{t("pricing.paymentWise", locale)}</span>
         </div>
       </div>
     </div>
@@ -93,33 +96,33 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
   <section class="section-border section-block">
     <div class="container">
       <div class="faq-header" style="text-align: center; max-width: 640px; margin: 0 auto;">
-        <div class="section-label">FAQ</div>
-        <h2 class="section-title">Everything you need to know</h2>
+        <div class="section-label">{t("faq.eyebrow", locale)}</div>
+        <h2 class="section-title">{t("pricing.faqTitle", locale)}</h2>
       </div>
       <div class="faq-grid" style="margin-top: 3rem;">
         <div class="glass faq-card">
-          <h3>Do I need perfect English?</h3>
-          <p>No. Sessions are adapted to your level. The only requirement is that you want to speak more.</p>
+          <h3>{t("faq.q1", locale)}</h3>
+          <p>{t("faq.a1", locale)}</p>
         </div>
         <div class="glass faq-card">
-          <h3>Are sessions online?</h3>
-          <p>Yes — via Google Meet, Zoom, or Discord. Your choice.</p>
+          <h3>{t("faq.q2", locale)}</h3>
+          <p>{t("faq.a2", locale)}</p>
         </div>
         <div class="glass faq-card">
-          <h3>Is this like a traditional English class?</h3>
-          <p>No. There are no textbooks, grammar drills, or worksheets. Every session is conversation-based.</p>
+          <h3>{t("faq.q4", locale)}</h3>
+          <p>{t("faq.a4", locale)}</p>
         </div>
         <div class="glass faq-card">
-          <h3>Can you help with job interviews?</h3>
-          <p>Yes. Interview preparation is one of my main specialties.</p>
+          <h3>{t("faq.q3", locale)}</h3>
+          <p>{t("faq.a3", locale)}</p>
         </div>
         <div class="glass faq-card">
-          <h3>What level do I need?</h3>
-          <p>If you can understand basic English, you're ready. We focus on speaking from day one.</p>
+          <h3>{t("faq.q5", locale)}</h3>
+          <p>{t("faq.a5", locale)}</p>
         </div>
         <div class="glass faq-card">
-          <h3>Can I reschedule?</h3>
-          <p>Yes, with 24 hours advance notice.</p>
+          <h3>{t("faq.q6", locale)}</h3>
+          <p>{t("faq.a6", locale)}</p>
         </div>
       </div>
     </div>
@@ -164,7 +167,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
     btn.addEventListener("click", async () => {
       const plan = btn.dataset.plan;
       btn.disabled = true;
-      btn.textContent = "Redirigiendo…";
+      btn.textContent = "Redirecting…";
       try {
         const res = await fetch("http://localhost:8787/api/create-checkout-session", {
           method: "POST", headers: { "Content-Type": "application/json" },
@@ -174,10 +177,10 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
         if (url) window.location.href = url;
         else throw new Error("No checkout URL");
       } catch (err) {
-        alert("Algo salió mal. Intenta de nuevo.");
+        alert("Something went wrong. Please try again.");
         console.error(err);
         btn.disabled = false;
-        btn.textContent = "Intentar de nuevo";
+        btn.textContent = "Try again";
       }
     });
   });

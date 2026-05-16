@@ -1,13 +1,16 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { t } from "@/i18n/utils.ts";
+
+const locale = "en";
 ---
 
-<BaseLayout title="Aviso de Privacidad">
+<BaseLayout title={t("privacy.pageTitle", locale)}>
   <section class="page-header">
     <div class="container">
-      <div class="section-label">Legal</div>
-      <h1>Aviso de Privacidad</h1>
-      <p>Última actualización: Mayo 2026</p>
+      <div class="section-label">{t("privacy.sectionLabel", locale)}</div>
+      <h1>{t("privacy.title", locale)}</h1>
+      <p>{t("privacy.updated", locale)}</p>
     </div>
   </section>
 
@@ -15,20 +18,20 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
     <div class="container">
       <div class="glass" style="max-width: 680px; margin: 0 auto; padding: 2.5rem; border-radius: 24px;">
         <div class="privacy-section">
-          <h2>Qué información recopilamos</h2>
-          <p>Recopilamos solo la información necesaria para dar el servicio: tu nombre, correo electrónico y datos de pago (procesados completamente por Stripe).</p>
+          <h2>{t("privacy.collectTitle", locale)}</h2>
+          <p>{t("privacy.collectDesc", locale)}</p>
         </div>
         <div class="privacy-section">
-          <h2>Cómo la usamos</h2>
-          <p>Para agendar clases, comunicarnos sobre las sesiones y procesar pagos. Nunca compartimos tus datos con terceros excepto Stripe para pagos y Calendly para la agenda.</p>
+          <h2>{t("privacy.useTitle", locale)}</h2>
+          <p>{t("privacy.useDesc", locale)}</p>
         </div>
         <div class="privacy-section">
-          <h2>Retención de datos</h2>
-          <p>Conservamos tu información solo mientras seas estudiante activo. Puedes solicitar su eliminación en cualquier momento.</p>
+          <h2>{t("privacy.retainTitle", locale)}</h2>
+          <p>{t("privacy.retainDesc", locale)}</p>
         </div>
         <div class="privacy-section" style="border: none; padding-bottom: 0;">
-          <h2>Contacto</h2>
-          <p>¿Preguntas? Contáctame vía <a href="mailto:mauriciotellezdev@gmail.com">mauriciotellezdev@gmail.com</a>.</p>
+          <h2>{t("privacy.contactTitle", locale)}</h2>
+          <p>{t("privacy.contactDesc", locale)} <a href="mailto:mauriciotellezdev@gmail.com">mauriciotellezdev@gmail.com</a>.</p>
         </div>
       </div>
     </div>

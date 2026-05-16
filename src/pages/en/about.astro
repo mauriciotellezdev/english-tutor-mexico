@@ -1,13 +1,16 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { t } from "@/i18n/utils.ts";
+
+const locale = "en";
 ---
 
-<BaseLayout title="About Mauricio Tellez | AI-Assisted English Immersion Coach" description="Native US English speaker and software engineer offering AI-assisted conversational English immersion for professionals in Mexico.">
+<BaseLayout title={t("about.pageTitle", locale)} description={t("about.subtitle", locale)}>
   <section class="page-header">
     <div class="container">
-      <div class="section-label">About</div>
-      <h1>Meet Mauricio Tellez</h1>
-      <p>Native US English speaker and software engineer — raised in California, now living in Mexico City.</p>
+      <div class="section-label">{t("about.sectionLabel", locale)}</div>
+      <h1>{t("about.title", locale)}</h1>
+      <p>{t("about.subtitle", locale)}</p>
     </div>
   </section>
 
@@ -17,43 +20,43 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
         <div class="about-photo-col">
           <img src="https://avatars.githubusercontent.com/u/282408621?v=4" alt="Mauricio Tellez" class="about-photo" width="360" height="450" />
           <div class="glass about-photo-badge">
-            <div class="badge-label">Native US English speaker</div>
-            <div class="badge-value">Software Engineer</div>
+            <div class="badge-label">{t("about.badgeLabel1", locale)}</div>
+            <div class="badge-value">{t("about.badgeLabel2", locale)}</div>
           </div>
         </div>
         <div class="about-text">
-          <div class="section-label">Background</div>
-          <h2 class="section-title">Native fluency meets software engineering</h2>
+          <div class="section-label">{t("about.backgroundLabel", locale)}</div>
+          <h2 class="section-title">{t("about.headline", locale)}</h2>
           
-          <p class="about-p">I'm a software engineer raised in California, now living in Mexico City. I help professionals become comfortable speaking English through AI-assisted conversational immersion — not traditional grammar lessons.</p>
+          <p class="about-p">{t("about.p1", locale)}</p>
           
-          <p class="about-p">My students are developers, remote workers, job seekers, and anyone who needs English for real situations. I've seen firsthand how strong communication skills open doors — better jobs, international teams, and real confidence.</p>
+          <p class="about-p">{t("about.p2", locale)}</p>
 
           <div class="about-highlight">
-            <strong>English first. Communication first.</strong>
-            <span>No textbooks. No grammar drills. Just real conversation.</span>
+            <strong>{t("about.highlightBold", locale)}</strong>
+            <span>{t("about.highlightText", locale)}</span>
           </div>
 
           <!-- Teaching Philosophy -->
           <div style="margin-top: 2.5rem;">
-            <div class="section-label">My Approach</div>
-            <h3 class="about-h3">AI-assisted conversational immersion</h3>
-            <p class="about-p">Most people already studied grammar. The real problem is fear and lack of speaking practice. My sessions use AI tools to help when you get stuck — providing quick translations and explanations so we can keep the conversation flowing in English. The result: less anxiety, more speaking time, faster progress.</p>
+            <div class="section-label">{t("about.approachLabel", locale)}</div>
+            <h3 class="about-h3">{t("about.approachTitle", locale)}</h3>
+            <p class="about-p">{t("about.approachDesc", locale)}</p>
           </div>
 
           <!-- Good fit if -->
           <div style="margin-top: 2.5rem;">
-            <div class="section-label">Good Fit If…</div>
+            <div class="section-label">{t("about.fitLabel", locale)}</div>
             <ul class="about-fit-list">
-              <li>✓ You understand English but freeze when speaking</li>
-              <li>✓ You mentally translate every sentence before saying it</li>
-              <li>✓ You want to work remotely with US teams</li>
-              <li>✓ You need English for interviews, meetings, or presentations</li>
-              <li>✓ You prefer real conversation over textbook exercises</li>
+              <li>{t("about.fit1", locale)}</li>
+              <li>{t("about.fit2", locale)}</li>
+              <li>{t("about.fit3", locale)}</li>
+              <li>{t("about.fit4", locale)}</li>
+              <li>{t("about.fit5", locale)}</li>
             </ul>
           </div>
 
-          <a href="/book" class="btn-primary" style="margin-top: 1.5rem;">Book Free Consultation</a>
+          <a href={`/${locale}/book`} class="btn-primary" style="margin-top: 1.5rem;">{t("about.ctaBtn", locale)}</a>
         </div>
       </div>
     </div>

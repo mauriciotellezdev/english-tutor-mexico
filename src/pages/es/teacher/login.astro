@@ -2,38 +2,38 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title="Sign In | English Immersion" description="Sign in to your student account with a magic link.">
+<BaseLayout title="Tutor Login | English Immersion" description="Teacher login for the English Immersion platform.">
   <section class="auth-page">
     <div class="auth-container">
       <div class="auth-card">
         <div class="auth-header">
-          <h1>Sign in</h1>
-          <p>Enter your email and we'll send you a magic link. No password needed.</p>
+          <h1>Tutor OS</h1>
+          <p>Sign in with your teacher account.</p>
         </div>
 
         <div id="login-status" class="auth-status" style="display: none;"></div>
 
-        <form id="login-form" class="auth-form">
+        <form id="teacher-login-form" class="auth-form">
           <div class="form-group">
-            <label for="login-email">Email address</label>
+            <label for="teacher-email">Email address</label>
             <input
               type="email"
-              id="login-email"
+              id="teacher-email"
               name="email"
-              placeholder="maria@email.com"
+              placeholder="mauricio@email.com"
               required
               autocomplete="email"
             />
           </div>
 
-          <button type="submit" id="login-btn" class="auth-btn-primary">
+          <button type="submit" id="teacher-login-btn" class="auth-btn-primary">
             <span class="btn-text">Send Magic Link</span>
             <span class="btn-loading" style="display: none;">Sending magic link...</span>
           </button>
         </form>
 
         <div class="auth-footer">
-          Don't have an account? <a href="/student/signup">Create one</a>
+          <a href="/">← Back to site</a>
         </div>
       </div>
     </div>
@@ -43,23 +43,33 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 <script>
   import { supabase } from '@/lib/supabase';
 
-  const form = document.getElementById('login-form');
-  const btn = document.getElementById('login-btn');
+  const form = document.getElementById('teacher-login-form');
+  const btn = document.getElementById('teacher-login-btn');
   const btnText = btn?.querySelector('.btn-text');
   const btnLoading = btn?.querySelector('.btn-loading');
   const status = document.getElementById('login-status');
 
-  // Check if already logged in
-  supabase.auth.getSession().then(({ data: { session } }) => {
+  // Check if already logged in as teacher
+  supabase.auth.getSession().then(async ({ data: { session } }) => {
     if (session) {
-      window.location.href = '/student/dashboard';
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single();
+      if (profile?.role === 'teacher') {
+        window.location.href = '/teacher/dashboard';
+      }
     }
   });
+
+  // Worker URL for sending magic links (bypasses Supabase SMTP)
+  const WORKER_URL = 'https://english-tutor-mexico-worker.mauriciotellezdev.workers.dev';
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const emailInput = document.getElementById('login-email') as HTMLInputElement;
+    const emailInput = document.getElementById('teacher-email') as HTMLInputElement;
     const email = emailInput?.value.trim();
 
     if (!email) {
@@ -71,22 +81,39 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
     if (btnLoading) btnLoading.style.display = 'block';
     if (btn) btn.disabled = true;
 
+    const timeout = setTimeout(() => {
+      showStatus('Request timed out. Please try again.', 'error');
+      if (btnText) btnText.style.display = 'block';
+      if (btnLoading) btnLoading.style.display = 'none';
+      if (btn) btn.disabled = false;
+    }, 15000);
+
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/student/callback`,
-        },
+      const resp = await fetch(`${WORKER_URL}/api/send-magic-link`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          redirectTo: `${window.location.origin}/teacher/callback`,
+          type: 'magiclink',
+        }),
       });
 
-      if (error) throw error;
+      clearTimeout(timeout);
+
+      if (!resp.ok) {
+        const err = await resp.json();
+        throw new Error(err.error || 'Failed to send magic link');
+      }
 
       showStatus(
-        `Magic link sent to ${email}! Check your inbox (and spam) and click the link to sign in.`,
+        `Magic link sent to ${email}! Check your inbox and click the link.`,
         'success'
       );
       form.reset();
     } catch (err: any) {
+      clearTimeout(timeout);
+      console.error('[Teacher Login] Error:', err);
       showStatus(err.message || 'Something went wrong. Please try again.', 'error');
     } finally {
       if (btnText) btnText.style.display = 'block';
@@ -185,7 +212,6 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
     margin-top: 1.5rem;
     text-align: center;
     font-size: 0.9rem;
-    color: #94a3b8;
   }
   .auth-footer a { color: #818cf8; font-weight: 500; }
   .auth-footer a:hover { color: #a5b4fc; }

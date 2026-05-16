@@ -1,0 +1,45 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { t } from "@/i18n/utils.ts";
+
+const locale = "es";
+---
+
+<BaseLayout title={t("privacy.pageTitle", locale)}>
+  <section class="page-header">
+    <div class="container">
+      <div class="section-label">{t("privacy.sectionLabel", locale)}</div>
+      <h1>{t("privacy.title", locale)}</h1>
+      <p>{t("privacy.updated", locale)}</p>
+    </div>
+  </section>
+
+  <section class="section-block" style="padding-top: 2rem;">
+    <div class="container">
+      <div class="glass" style="max-width: 680px; margin: 0 auto; padding: 2.5rem; border-radius: 24px;">
+        <div class="privacy-section">
+          <h2>{t("privacy.collectTitle", locale)}</h2>
+          <p>{t("privacy.collectDesc", locale)}</p>
+        </div>
+        <div class="privacy-section">
+          <h2>{t("privacy.useTitle", locale)}</h2>
+          <p>{t("privacy.useDesc", locale)}</p>
+        </div>
+        <div class="privacy-section">
+          <h2>{t("privacy.retainTitle", locale)}</h2>
+          <p>{t("privacy.retainDesc", locale)}</p>
+        </div>
+        <div class="privacy-section" style="border: none; padding-bottom: 0;">
+          <h2>{t("privacy.contactTitle", locale)}</h2>
+          <p>{t("privacy.contactDesc", locale)} <a href="mailto:mauriciotellezdev@gmail.com">mauriciotellezdev@gmail.com</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style is:global>
+  .privacy-section { padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-subtle); }
+  .privacy-section h2 { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; }
+  .privacy-section p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7; }
+</style>

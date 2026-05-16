@@ -1,0 +1,36 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { t } from "@/i18n/utils.ts";
+
+const locale = "es";
+---
+
+<BaseLayout title={t("book.pageTitle", locale)} description={t("book.pageDesc", locale)}>
+  <section class="page-header">
+    <div class="container">
+      <div class="section-label">{t("book.sectionLabel", locale)}</div>
+      <h1>{t("book.title", locale)}</h1>
+      <p>{t("book.subtitle", locale)}</p>
+    </div>
+  </section>
+
+  <section class="section-block" style="padding-top: 2rem;">
+    <div class="container" style="max-width: 600px; margin: 0 auto;">
+      <div class="glass booking-card">
+        <h3>{t("book.calendlyHeading", locale)}</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem;">
+          {t("book.calendlySub", locale)}
+        </p>
+        <!-- Calendly inline widget begin -->
+        <div class="calendly-inline-widget" data-url="https://calendly.com/mauriciotellezdev/consulta-gratis?hide_event_type_details=1&hide_gdpr_banner=1&background_color=020617&text_color=ffffff" style="min-width:320px;height:700px;"></div>
+        <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+        <!-- Calendly inline widget end -->
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style is:global>
+  .booking-card { padding: 1.5rem; border-radius: 20px; margin-bottom: 1.5rem; }
+  .booking-card h3 { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; }
+</style>

@@ -94,7 +94,12 @@ export default {
           httpClient: Stripe.createFetchHttpClient(),
         });
 
-        const body: { plan?: string } = await request.json();
+        let body: { plan?: string };
+        try {
+          body = await request.json();
+        } catch {
+          return jsonResponse({ error: "Invalid JSON in request body" }, 400, origin);
+        }
         const { plan } = body;
 
         if (!plan) {
@@ -171,12 +176,100 @@ export default {
       }
     }
 
+    // ---- POST /api/book-consult ----
+    // Signs up a new student, sends confirmation email, returns success
+    if (request.method === "POST" && url.pathname === "/api/book-consult") {
+      try {
+        let body: { name?: string; email?: string };
+        try {
+          body = await request.json();
+        } catch {
+          return jsonResponse({ error: "Invalid JSON in request body" }, 400, origin);
+        }
+        const { name, email } = body;
+
+        if (!name || !email) {
+          return jsonResponse({ error: "Missing 'name' or 'email' in request body" }, 400, origin);
+        }
+
+        // Create user via Supabase admin API
+        const signupUrl = `${env.SUPABASE_URL}/auth/v1/admin/users`;
+        const signupResp = await fetch(signupUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+            Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+          },
+          body: JSON.stringify({
+            email,
+            email_confirm: true,
+            user_metadata: { name, role: "student" },
+          }),
+        });
+
+        if (!signupResp.ok) {
+          const errText = await signupResp.text();
+          // If user already exists, that's ok — just continue
+          if (!errText.includes("already been registered")) {
+            console.error("Supabase signup error:", signupResp.status, errText);
+            return jsonResponse({ error: "Failed to create account" }, 500, origin);
+          }
+        }
+
+        // Send confirmation email via Resend
+        const resendResp = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${env.RESEND_API_KEY}`,
+          },
+          body: JSON.stringify({
+            from: "English Immersion <onboarding@resend.dev>",
+            to: email,
+            subject: "✅ Consulta confirmada — English Immersion",
+            html: `
+              <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+                <h2 style="color: #6366f1;">¡Hola ${name}!</h2>
+                <p>Tu consulta gratuita ha sido registrada. Ahora puedes agendar tu sesión en el calendario de abajo.</p>
+                <p style="color: #64748b; font-size: 14px; margin-top: 16px;">
+                  Tu cuenta de estudiante ha sido creada con este correo: <strong>${email}</strong>
+                </p>
+                <p style="color: #64748b; font-size: 14px;">
+                  Después de tu consulta, usa el mismo correo para iniciar sesión en tu portal de estudiante.
+                </p>
+                <p style="color: #64748b; font-size: 12px; margin-top: 24px;">
+                  Si no solicitaste esto, ignora este correo.
+                </p>
+              </div>
+            `,
+          }),
+        });
+
+        if (!resendResp.ok) {
+          const errText = await resendResp.text();
+          console.error("Resend error:", resendResp.status, errText);
+          // Non-fatal — user was created, email just failed
+        }
+
+        return jsonResponse({ success: true, message: "Account created" }, 200, origin);
+      } catch (err) {
+        console.error("Book consult error:", err);
+        return jsonResponse({ error: "Failed to process booking" }, 500, origin);
+      }
+    }
+
     // ---- POST /api/send-magic-link ----
     // Bypasses Supabase's broken SMTP by generating magic links via admin API
     // and sending them directly through Resend
     if (request.method === "POST" && url.pathname === "/api/send-magic-link") {
       try {
-        const body: { email?: string; redirectTo?: string; type?: string } = await request.json();
+        let body: { email?: string; redirectTo?: string; type?: string };
+        try {
+          body = await request.json();
+        } catch {
+          return jsonResponse({ error: "Invalid JSON in request body" }, 400, origin);
+        }
         const { email, redirectTo, type } = body;
 
         if (!email) {

@@ -1,0 +1,127 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Signing in... | Tutor OS">
+  <section class="auth-page">
+    <div class="auth-container">
+      <div class="auth-card" style="text-align: center;">
+        <div class="spinner" id="callback-spinner"></div>
+        <h1 id="callback-title">Signing you in...</h1>
+        <p id="callback-desc">Please wait while we verify your magic link.</p>
+        <div id="callback-error" style="display: none;">
+          <p class="error-text" id="callback-error-msg"></p>
+          <a href="/teacher/login" class="auth-btn-primary" style="display: inline-block; margin-top: 1rem; text-decoration: none;">
+            Try Again
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import { supabase } from '@/lib/supabase';
+
+  (async function handleCallback() {
+    const spinner = document.getElementById('callback-spinner');
+    const title = document.getElementById('callback-title');
+    const desc = document.getElementById('callback-desc');
+    const errorDiv = document.getElementById('callback-error');
+    const errorMsg = document.getElementById('callback-error-msg');
+
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+
+      if (error || !session) {
+        throw new Error('Invalid or expired magic link. Please request a new one.');
+      }
+
+      // Verify this is a teacher account
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role, email')
+        .eq('id', session.user.id)
+        .single();
+
+      console.log('[Teacher Callback] Session user:', session.user.email);
+      console.log('[Teacher Callback] Profile:', profile);
+      console.log('[Teacher Callback] Profile error:', profileError);
+
+      if (profileError) {
+        throw new Error(`Profile not found. Error: ${profileError.message}. You may need to run the SQL schema in Supabase.`);
+      }
+
+      if (profile?.role !== 'teacher') {
+        throw new Error(`Access denied. Your role is "${profile?.role}" — needs to be "teacher". Run this in Supabase SQL Editor:\n\nUPDATE profiles SET role = 'teacher' WHERE email = '${session.user.email}';`);
+      }
+
+      // Redirect to teacher dashboard
+      title.textContent = 'Welcome back!';
+      desc.textContent = 'Redirecting to Tutor OS...';
+      window.location.href = '/teacher/dashboard';
+
+    } catch (err: any) {
+      if (spinner) spinner.style.display = 'none';
+      if (title) title.textContent = 'Sign in failed';
+      if (desc) desc.style.display = 'none';
+      if (errorDiv) errorDiv.style.display = 'block';
+      if (errorMsg) errorMsg.textContent = err.message || 'Something went wrong.';
+    }
+  })();
+</script>
+
+<style is:global>
+  .auth-page {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+  }
+  .auth-container { width: 100%; max-width: 440px; }
+  .auth-card {
+    padding: 2.5rem;
+    border-radius: 24px;
+    background: rgba(15,23,42,0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .auth-card h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.5rem;
+  }
+  .auth-card p {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    line-height: 1.6;
+  }
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: #6366f1;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 1.5rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-text { color: #f87171; font-size: 0.95rem; margin-bottom: 1rem; }
+  .auth-btn-primary {
+    padding: 0.875rem 1.5rem;
+    border-radius: 14px;
+    background: #6366f1;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .auth-btn-primary:hover { background: #818cf8; }
+</style>

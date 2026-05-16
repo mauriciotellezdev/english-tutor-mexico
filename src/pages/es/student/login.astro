@@ -1,63 +1,42 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { t } from "@/i18n/utils.ts";
+
+const locale = "es";
 ---
 
-<BaseLayout title="Sign Up | English Immersion" description="Create your account and start your English fluency journey.">
+<BaseLayout title={t("student.login.pageTitle", locale)} description={t("student.login.subtitle", locale)}>
   <section class="auth-page">
     <div class="auth-container">
       <div class="auth-card">
         <div class="auth-header">
-          <h1>Create your account</h1>
-          <p>Start speaking English with confidence. No password needed — just your email.</p>
+          <h1>{t("student.login.heading", locale)}</h1>
+          <p>{t("student.login.subtitle", locale)}</p>
         </div>
 
-        <div id="signup-status" class="auth-status" style="display: none;"></div>
+        <div id="login-status" class="auth-status" style="display: none;"></div>
 
-        <form id="signup-form" class="auth-form">
+        <form id="login-form" class="auth-form">
           <div class="form-group">
-            <label for="full-name">Your name</label>
-            <input
-              type="text"
-              id="full-name"
-              name="full-name"
-              placeholder="e.g. María García"
-              required
-              autocomplete="name"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="signup-email">Email address</label>
+            <label for="login-email">{t("student.login.emailLabel", locale)}</label>
             <input
               type="email"
-              id="signup-email"
+              id="login-email"
               name="email"
-              placeholder="maria@email.com"
+              placeholder={t("student.login.emailPlaceholder", locale)}
               required
               autocomplete="email"
             />
           </div>
 
-          <div class="form-group" id="ref-code-group" style="display: none;">
-            <label for="ref-code">Referral code</label>
-            <input
-              type="text"
-              id="ref-code"
-              name="ref-code"
-              placeholder="QR code (auto-filled)"
-              readonly
-            />
-            <span class="form-hint">This gives you 50% off your first 5 lessons!</span>
-          </div>
-
-          <button type="submit" id="signup-btn" class="auth-btn-primary">
-            <span class="btn-text">Create Account</span>
-            <span class="btn-loading" style="display: none;">Sending magic link...</span>
+          <button type="submit" id="login-btn" class="auth-btn-primary">
+            <span class="btn-text">{t("student.login.submitBtn", locale)}</span>
+            <span class="btn-loading" style="display: none;">{t("student.login.loadingBtn", locale)}</span>
           </button>
         </form>
 
         <div class="auth-footer">
-          Already have an account? <a href="/student/login">Sign in</a>
+          {t("student.login.noAccount", locale)} <a href={`/${locale}/book`}>{t("student.login.createAccountLink", locale)}</a>
         </div>
       </div>
     </div>
@@ -67,64 +46,30 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 <script>
   import { supabase } from '@/lib/supabase';
 
-  // Check for referral code in URL
-  const params = new URLSearchParams(window.location.search);
-  const refCode = params.get('ref');
-
-  // Track QR scan if ref code is present
-  if (refCode) {
-    const refGroup = document.getElementById('ref-code-group');
-    const refInput = document.getElementById('ref-code');
-    if (refGroup && refInput) {
-      refGroup.style.display = 'block';
-      refInput.value = refCode;
-    }
-
-    // Log the scan
-    (async function trackScan() {
-      // First, get the campaign ID
-      const { data: campaign } = await supabase
-        .from('qr_campaigns')
-        .select('id')
-        .eq('code', refCode)
-        .single();
-
-      if (campaign) {
-        await supabase
-          .from('qr_scans')
-          .insert({
-            campaign_id: campaign.id,
-            ip_address: '', // Not available client-side reliably
-            user_agent: navigator.userAgent,
-          });
-      }
-    })();
-  }
-
-  // Handle signup form
-  const form = document.getElementById('signup-form');
-  const btn = document.getElementById('signup-btn');
+  const form = document.getElementById('login-form');
+  const btn = document.getElementById('login-btn');
   const btnText = btn?.querySelector('.btn-text');
   const btnLoading = btn?.querySelector('.btn-loading');
-  const status = document.getElementById('signup-status');
+  const status = document.getElementById('login-status');
+
+  // Check if already logged in
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (session) {
+      window.location.href = '/student/dashboard';
+    }
+  });
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const nameInput = document.getElementById('full-name') as HTMLInputElement;
-    const emailInput = document.getElementById('signup-email') as HTMLInputElement;
-    const refInput = document.getElementById('ref-code') as HTMLInputElement;
-
-    const fullName = nameInput?.value.trim();
+    const emailInput = document.getElementById('login-email') as HTMLInputElement;
     const email = emailInput?.value.trim();
-    const refCode = refInput?.value.trim();
 
-    if (!fullName || !email) {
-      showStatus('Please fill in all required fields.', 'error');
+    if (!email) {
+      showStatus('Por favor ingresa tu correo electrónico.', 'error');
       return;
     }
 
-    // Show loading
     if (btnText) btnText.style.display = 'none';
     if (btnLoading) btnLoading.style.display = 'block';
     if (btn) btn.disabled = true;
@@ -133,11 +78,6 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          data: {
-            full_name: fullName,
-            role: 'student',
-            ref_code: refCode || null,
-          },
           emailRedirectTo: `${window.location.origin}/student/callback`,
         },
       });
@@ -145,12 +85,12 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
       if (error) throw error;
 
       showStatus(
-        `Magic link sent to ${email}! Check your inbox (and spam) and click the link to sign in.`,
+        `¡Enlace mágico enviado a ${email}! Revisa tu bandeja (y spam) y haz clic en el enlace para iniciar sesión.`,
         'success'
       );
       form.reset();
     } catch (err: any) {
-      showStatus(err.message || 'Something went wrong. Please try again.', 'error');
+      showStatus(err.message || 'Algo salió mal. Inténtalo de nuevo.', 'error');
     } finally {
       if (btnText) btnText.style.display = 'block';
       if (btnLoading) btnLoading.style.display = 'none';
@@ -174,10 +114,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
     justify-content: center;
     padding: 3rem 1.5rem;
   }
-  .auth-container {
-    width: 100%;
-    max-width: 440px;
-  }
+  .auth-container { width: 100%; max-width: 440px; }
   .auth-card {
     padding: 2.5rem;
     border-radius: 24px;
@@ -201,11 +138,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
   }
   .auth-form { display: flex; flex-direction: column; gap: 1.25rem; }
   .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
-  .form-group label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #cbd5e1;
-  }
+  .form-group label { font-size: 0.85rem; font-weight: 600; color: #cbd5e1; }
   .form-group input {
     padding: 0.75rem 1rem;
     border-radius: 12px;
@@ -219,16 +152,6 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
   }
   .form-group input:focus { border-color: #6366f1; }
   .form-group input::placeholder { color: #64748b; }
-  .form-group input[readonly] {
-    background: rgba(99,102,241,0.1);
-    border-color: rgba(99,102,241,0.3);
-    color: #a5b4fc;
-  }
-  .form-hint {
-    font-size: 0.8rem;
-    color: #34d399;
-    font-weight: 500;
-  }
   .auth-btn-primary {
     padding: 0.875rem 1.5rem;
     border-radius: 14px;
