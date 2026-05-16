@@ -1,0 +1,276 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Sign Up | English Immersion" description="Create your account and start your English fluency journey.">
+  <section class="auth-page">
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1>Create your account</h1>
+          <p>Start speaking English with confidence. No password needed — just your email.</p>
+        </div>
+
+        <div id="signup-status" class="auth-status" style="display: none;"></div>
+
+        <form id="signup-form" class="auth-form">
+          <div class="form-group">
+            <label for="full-name">Your name</label>
+            <input
+              type="text"
+              id="full-name"
+              name="full-name"
+              placeholder="e.g. María García"
+              required
+              autocomplete="name"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="signup-email">Email address</label>
+            <input
+              type="email"
+              id="signup-email"
+              name="email"
+              placeholder="maria@email.com"
+              required
+              autocomplete="email"
+            />
+          </div>
+
+          <div class="form-group" id="ref-code-group" style="display: none;">
+            <label for="ref-code">Referral code</label>
+            <input
+              type="text"
+              id="ref-code"
+              name="ref-code"
+              placeholder="QR code (auto-filled)"
+              readonly
+            />
+            <span class="form-hint">This gives you 50% off your first 5 lessons!</span>
+          </div>
+
+          <button type="submit" id="signup-btn" class="auth-btn-primary">
+            <span class="btn-text">Create Account</span>
+            <span class="btn-loading" style="display: none;">Sending magic link...</span>
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          Already have an account? <a href="/student/login">Sign in</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import { supabase } from '@/lib/supabase';
+
+  // Check for referral code in URL
+  const params = new URLSearchParams(window.location.search);
+  const refCode = params.get('ref');
+
+  // Track QR scan if ref code is present
+  if (refCode) {
+    const refGroup = document.getElementById('ref-code-group');
+    const refInput = document.getElementById('ref-code');
+    if (refGroup && refInput) {
+      refGroup.style.display = 'block';
+      refInput.value = refCode;
+    }
+
+    // Log the scan
+    (async function trackScan() {
+      // First, get the campaign ID
+      const { data: campaign } = await supabase
+        .from('qr_campaigns')
+        .select('id')
+        .eq('code', refCode)
+        .single();
+
+      if (campaign) {
+        await supabase
+          .from('qr_scans')
+          .insert({
+            campaign_id: campaign.id,
+            ip_address: '', // Not available client-side reliably
+            user_agent: navigator.userAgent,
+          });
+      }
+    })();
+  }
+
+  // Handle signup form
+  const form = document.getElementById('signup-form');
+  const btn = document.getElementById('signup-btn');
+  const btnText = btn?.querySelector('.btn-text');
+  const btnLoading = btn?.querySelector('.btn-loading');
+  const status = document.getElementById('signup-status');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const nameInput = document.getElementById('full-name') as HTMLInputElement;
+    const emailInput = document.getElementById('signup-email') as HTMLInputElement;
+    const refInput = document.getElementById('ref-code') as HTMLInputElement;
+
+    const fullName = nameInput?.value.trim();
+    const email = emailInput?.value.trim();
+    const refCode = refInput?.value.trim();
+
+    if (!fullName || !email) {
+      showStatus('Please fill in all required fields.', 'error');
+      return;
+    }
+
+    // Show loading
+    if (btnText) btnText.style.display = 'none';
+    if (btnLoading) btnLoading.style.display = 'block';
+    if (btn) btn.disabled = true;
+
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          data: {
+            full_name: fullName,
+            role: 'student',
+            ref_code: refCode || null,
+          },
+          emailRedirectTo: `${window.location.origin}/student/callback`,
+        },
+      });
+
+      if (error) throw error;
+
+      showStatus(
+        `Magic link sent to ${email}! Check your inbox (and spam) and click the link to sign in.`,
+        'success'
+      );
+      form.reset();
+    } catch (err: any) {
+      showStatus(err.message || 'Something went wrong. Please try again.', 'error');
+    } finally {
+      if (btnText) btnText.style.display = 'block';
+      if (btnLoading) btnLoading.style.display = 'none';
+      if (btn) btn.disabled = false;
+    }
+  });
+
+  function showStatus(message: string, type: 'success' | 'error') {
+    if (!status) return;
+    status.textContent = message;
+    status.className = `auth-status auth-status-${type}`;
+    status.style.display = 'block';
+  }
+</script>
+
+<style is:global>
+  .auth-page {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+  }
+  .auth-container {
+    width: 100%;
+    max-width: 440px;
+  }
+  .auth-card {
+    padding: 2.5rem;
+    border-radius: 24px;
+    background: rgba(15,23,42,0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .auth-header h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.5rem;
+  }
+  .auth-header p {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+  .auth-form { display: flex; flex-direction: column; gap: 1.25rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #cbd5e1;
+  }
+  .form-group input {
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    font-size: 0.95rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus { border-color: #6366f1; }
+  .form-group input::placeholder { color: #64748b; }
+  .form-group input[readonly] {
+    background: rgba(99,102,241,0.1);
+    border-color: rgba(99,102,241,0.3);
+    color: #a5b4fc;
+  }
+  .form-hint {
+    font-size: 0.8rem;
+    color: #34d399;
+    font-weight: 500;
+  }
+  .auth-btn-primary {
+    padding: 0.875rem 1.5rem;
+    border-radius: 14px;
+    background: #6366f1;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    margin-top: 0.5rem;
+  }
+  .auth-btn-primary:hover { background: #818cf8; }
+  .auth-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+  .auth-status {
+    padding: 0.875rem 1rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+  .auth-status-success {
+    background: rgba(52,211,153,0.1);
+    border: 1px solid rgba(52,211,153,0.2);
+    color: #34d399;
+  }
+  .auth-status-error {
+    background: rgba(248,113,113,0.1);
+    border: 1px solid rgba(248,113,113,0.2);
+    color: #f87171;
+  }
+  .auth-footer {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #94a3b8;
+  }
+  .auth-footer a { color: #818cf8; font-weight: 500; }
+  .auth-footer a:hover { color: #a5b4fc; }
+
+  @media (width <= 640px) {
+    .auth-card { padding: 1.75rem; }
+  }
+</style>

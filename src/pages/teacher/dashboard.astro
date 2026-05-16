@@ -1,0 +1,749 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Tutor OS | Dashboard" description="Teacher dashboard for managing students, sessions, and QR codes.">
+  <section class="teacher-page">
+    <div class="teacher-container">
+      <!-- Header -->
+      <div class="teacher-header">
+        <div>
+          <h1>Tutor OS</h1>
+          <p>Manage students, sessions, and QR campaigns.</p>
+        </div>
+        <button id="teacher-logout-btn" class="logout-btn">Sign out</button>
+      </div>
+
+      <!-- Loading state -->
+      <div id="teacher-loading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading Tutor OS...</p>
+      </div>
+
+      <!-- Dashboard content -->
+      <div id="teacher-content" style="display: none;">
+        <!-- Stats -->
+        <div class="teacher-stats">
+          <div class="stat-card">
+            <div class="stat-value" id="t-stat-students">—</div>
+            <div class="stat-label">Active Students</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="t-stat-sessions">—</div>
+            <div class="stat-label">Sessions This Week</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="t-stat-scans">—</div>
+            <div class="stat-label">QR Scans</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="t-stat-signups">—</div>
+            <div class="stat-label">Signups from QR</div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="teacher-tabs">
+          <button class="tab-btn active" data-tab="students">Students</button>
+          <button class="tab-btn" data-tab="sessions">Sessions</button>
+          <button class="tab-btn" data-tab="qr-codes">QR Codes</button>
+        </div>
+
+        <!-- Tab: Students -->
+        <div id="tab-students" class="tab-content active">
+          <div class="tab-header">
+            <h2>Students</h2>
+          </div>
+          <div id="students-list" class="students-list">
+            <p class="empty-state">No students yet.</p>
+          </div>
+        </div>
+
+        <!-- Tab: Sessions -->
+        <div id="tab-sessions" class="tab-content">
+          <div class="tab-header">
+            <h2>Upcoming Sessions</h2>
+          </div>
+          <div id="sessions-list" class="sessions-list">
+            <p class="empty-state">No upcoming sessions.</p>
+          </div>
+        </div>
+
+        <!-- Tab: QR Codes -->
+        <div id="tab-qr-codes" class="tab-content">
+          <div class="tab-header">
+            <h2>QR Campaigns</h2>
+            <button id="new-qr-btn" class="btn-primary-sm">+ New Campaign</button>
+          </div>
+
+          <!-- New QR Form -->
+          <div id="new-qr-form" class="new-qr-form" style="display: none;">
+            <h3>Create QR Campaign</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="qr-name">Campaign Name</label>
+                <input type="text" id="qr-name" placeholder="e.g. Flyer — Language School CDMX" />
+              </div>
+              <div class="form-group">
+                <label for="qr-code">Ref Code</label>
+                <input type="text" id="qr-code" placeholder="e.g. qr-flyer-002" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="qr-discount">Discount %</label>
+                <input type="number" id="qr-discount" value="50" min="0" max="100" />
+              </div>
+              <div class="form-group">
+                <label for="qr-sessions">Discount Sessions</label>
+                <input type="number" id="qr-sessions" value="5" min="1" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="qr-desc">Description</label>
+              <input type="text" id="qr-desc" placeholder="Optional description" />
+            </div>
+            <div class="form-actions">
+              <button id="qr-cancel-btn" class="btn-secondary-sm">Cancel</button>
+              <button id="qr-create-btn" class="btn-primary-sm">Create Campaign</button>
+            </div>
+          </div>
+
+          <div id="qr-list" class="qr-list">
+            <p class="empty-state">No QR campaigns yet.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline>
+  // QR code generation (client-side, no server needed)
+  // Uses a lightweight inline QR generator
+  function generateQRCodeSVG(text, size) {
+    // Simple QR code using the qrcode-generator approach
+    // For production, use the full qrcode library
+    // This is a placeholder — the full implementation uses the npm package
+    return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+      <rect width="${size}" height="${size}" fill="white"/>
+      <text x="${size/2}" y="${size/2}" text-anchor="middle" dominant-baseline="middle" font-size="12" fill="#6366f1">QR: ${text}</text>
+    </svg>`;
+  }
+</script>
+
+<script>
+  import { supabase } from '@/lib/supabase';
+  import QRCode from 'qrcode';
+
+  // Check auth and teacher role
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    window.location.href = '/teacher/login';
+  }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', session.user.id)
+    .single();
+
+  if (profile?.role !== 'teacher') {
+    window.location.href = '/';
+  }
+
+  // Load dashboard
+  async function loadTeacherDashboard() {
+    // Get student count
+    const { count: studentCount } = await supabase
+      .from('profiles')
+      .select('*', { count: 'exact', head: true })
+      .eq('role', 'student');
+
+    // Get sessions this week
+    const now = new Date();
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - now.getDay());
+    weekStart.setHours(0, 0, 0, 0);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 7);
+
+    const { count: weekSessions } = await supabase
+      .from('sessions')
+      .select('*', { count: 'exact', head: true })
+      .gte('scheduled_at', weekStart.toISOString())
+      .lt('scheduled_at', weekEnd.toISOString());
+
+    // Get QR scans
+    const { count: qrScans } = await supabase
+      .from('qr_scans')
+      .select('*', { count: 'exact', head: true });
+
+    // Get QR signups (students with discounts)
+    const { count: qrSignups } = await supabase
+      .from('student_discounts')
+      .select('*', { count: 'exact', head: true });
+
+    // Get all students
+    const { data: students } = await supabase
+      .from('profiles')
+      .select('*, student_discounts(discount_percent, remaining_sessions, total_sessions, used_sessions)')
+      .eq('role', 'student')
+      .order('created_at', { ascending: false });
+
+    // Get upcoming sessions
+    const { data: upcomingSessions } = await supabase
+      .from('sessions')
+      .select('*, profiles(full_name, email, current_level)')
+      .eq('status', 'scheduled')
+      .gte('scheduled_at', now.toISOString())
+      .order('scheduled_at', { ascending: true })
+      .limit(10);
+
+    // Get QR campaigns
+    const { data: campaigns } = await supabase
+      .from('qr_campaigns')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    // Get scan counts per campaign
+    const campaignStats: Record<string, number> = {};
+    if (campaigns) {
+      for (const c of campaigns) {
+        const { count } = await supabase
+          .from('qr_scans')
+          .select('*', { count: 'exact', head: true })
+          .eq('campaign_id', c.id);
+        campaignStats[c.id] = count || 0;
+      }
+    }
+
+    // Update UI
+    const loading = document.getElementById('teacher-loading');
+    const content = document.getElementById('teacher-content');
+    if (loading) loading.style.display = 'none';
+    if (content) content.style.display = 'block';
+
+    // Stats
+    const el = (id: string) => document.getElementById(id);
+    if (el('t-stat-students')) el('t-stat-students')!.textContent = String(studentCount || 0);
+    if (el('t-stat-sessions')) el('t-stat-sessions')!.textContent = String(weekSessions || 0);
+    if (el('t-stat-scans')) el('t-stat-scans')!.textContent = String(qrScans || 0);
+    if (el('t-stat-signups')) el('t-stat-signups')!.textContent = String(qrSignups || 0);
+
+    // Students list
+    const studentsList = el('students-list');
+    if (studentsList) {
+      if (students && students.length > 0) {
+        studentsList.innerHTML = students.map((s: any) => {
+          const discount = s.student_discounts?.[0];
+          return `
+            <div class="student-row">
+              <div class="student-info">
+                <div class="student-name">${s.full_name || 'Unnamed'}</div>
+                <div class="student-email">${s.email}</div>
+              </div>
+              <div class="student-meta">
+                <span class="level-badge-sm">${(s.current_level || '—').toUpperCase()}</span>
+                ${discount ? `<span class="discount-badge-sm">${discount.discount_percent}% off — ${discount.remaining_sessions} left</span>` : ''}
+              </div>
+              <div class="student-date">${new Date(s.created_at).toLocaleDateString('en-MX', { month: 'short', day: 'numeric' })}</div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    // Sessions list
+    const sessionsList = el('sessions-list');
+    if (sessionsList) {
+      if (upcomingSessions && upcomingSessions.length > 0) {
+        sessionsList.innerHTML = upcomingSessions.map((s: any) => `
+          <div class="session-row">
+            <div class="session-info">
+              <div class="session-student">${s.profiles?.full_name || 'Unknown'}</div>
+              <div class="session-level">${(s.profiles?.current_level || '—').toUpperCase()}</div>
+            </div>
+            <div class="session-datetime">
+              <div class="session-date">${new Date(s.scheduled_at).toLocaleDateString('en-MX', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+              <div class="session-time">${new Date(s.scheduled_at).toLocaleTimeString('en-MX', { hour: '2-digit', minute: '2-digit' })}</div>
+            </div>
+            <div class="session-actions">
+              <button class="btn-complete" data-session-id="${s.id}">Complete</button>
+              <button class="btn-cancel" data-session-id="${s.id}">Cancel</button>
+            </div>
+          </div>
+        `).join('');
+
+        // Add event listeners for complete/cancel buttons
+        document.querySelectorAll('.btn-complete').forEach((btn) => {
+          btn.addEventListener('click', async () => {
+            const sessionId = btn.getAttribute('data-session-id');
+            await supabase
+              .from('sessions')
+              .update({ status: 'completed', completed_at: new Date().toISOString() })
+              .eq('id', sessionId);
+
+            // If student has a discount, increment used_sessions
+            const { data: session } = await supabase
+              .from('sessions')
+              .select('student_id')
+              .eq('id', sessionId)
+              .single();
+
+            if (session) {
+              const { data: discount } = await supabase
+                .from('student_discounts')
+                .select('id, used_sessions')
+                .eq('student_id', session.student_id)
+                .eq('is_active', true)
+                .single();
+
+              if (discount && discount.used_sessions < discount.total_sessions) {
+                await supabase
+                  .from('student_discounts')
+                  .update({ used_sessions: discount.used_sessions + 1 })
+                  .eq('id', discount.id);
+              }
+            }
+
+            loadTeacherDashboard();
+          });
+        });
+
+        document.querySelectorAll('.btn-cancel').forEach((btn) => {
+          btn.addEventListener('click', async () => {
+            const sessionId = btn.getAttribute('data-session-id');
+            await supabase
+              .from('sessions')
+              .update({ status: 'cancelled' })
+              .eq('id', sessionId);
+            loadTeacherDashboard();
+          });
+        });
+      }
+    }
+
+    // QR campaigns list
+    const qrList = el('qr-list');
+    if (qrList) {
+      if (campaigns && campaigns.length > 0) {
+        qrList.innerHTML = campaigns.map((c: any) => {
+          const scans = campaignStats[c.id] || 0;
+          const url = `${window.location.origin}/signup?ref=${c.code}`;
+          return `
+            <div class="qr-row ${c.is_active ? '' : 'inactive'}">
+              <div class="qr-info">
+                <div class="qr-name">${c.name}</div>
+                <div class="qr-code-text">${c.code}</div>
+                <div class="qr-url">${url}</div>
+              </div>
+              <div class="qr-stats">
+                <div class="qr-stat">
+                  <span class="qr-stat-value">${scans}</span>
+                  <span class="qr-stat-label">scans</span>
+                </div>
+                <div class="qr-stat">
+                  <span class="qr-stat-value">${c.discount_percent}%</span>
+                  <span class="qr-stat-label">discount</span>
+                </div>
+                <div class="qr-stat">
+                  <span class="qr-stat-value">${c.discount_sessions}</span>
+                  <span class="qr-stat-label">sessions</span>
+                </div>
+              </div>
+              <div class="qr-actions">
+                <button class="btn-download-qr" data-url="${url}" data-code="${c.code}">Download QR</button>
+                <button class="btn-toggle-qr" data-id="${c.id}" data-active="${c.is_active}">
+                  ${c.is_active ? 'Deactivate' : 'Activate'}
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // Download QR buttons
+        document.querySelectorAll('.btn-download-qr').forEach((btn) => {
+          btn.addEventListener('click', async () => {
+            const url = btn.getAttribute('data-url');
+            const code = btn.getAttribute('data-code');
+            if (!url) return;
+
+            try {
+              const svg = await QRCode.toString(url, { type: 'svg', margin: 2, width: 300 });
+              const blob = new Blob([svg], { type: 'image/svg+xml' });
+              const downloadUrl = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = downloadUrl;
+              a.download = `qr-${code}.svg`;
+              a.click();
+              URL.revokeObjectURL(downloadUrl);
+            } catch (err) {
+              console.error('QR generation failed:', err);
+            }
+          });
+        });
+
+        // Toggle campaign buttons
+        document.querySelectorAll('.btn-toggle-qr').forEach((btn) => {
+          btn.addEventListener('click', async () => {
+            const id = btn.getAttribute('data-id');
+            const active = btn.getAttribute('data-active') === 'true';
+            await supabase
+              .from('qr_campaigns')
+              .update({ is_active: !active })
+              .eq('id', id);
+            loadTeacherDashboard();
+          });
+        });
+      }
+    }
+  }
+
+  // Tab switching
+  document.querySelectorAll('.tab-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach((c) => c.classList.remove('active'));
+      btn.classList.add('active');
+      const tabId = btn.getAttribute('data-tab');
+      const tabContent = document.getElementById(`tab-${tabId}`);
+      if (tabContent) tabContent.classList.add('active');
+    });
+  });
+
+  // New QR form
+  document.getElementById('new-qr-btn')?.addEventListener('click', () => {
+    const form = document.getElementById('new-qr-form');
+    if (form) form.style.display = 'block';
+  });
+
+  document.getElementById('qr-cancel-btn')?.addEventListener('click', () => {
+    const form = document.getElementById('new-qr-form');
+    if (form) form.style.display = 'none';
+  });
+
+  document.getElementById('qr-create-btn')?.addEventListener('click', async () => {
+    const name = (document.getElementById('qr-name') as HTMLInputElement)?.value.trim();
+    const code = (document.getElementById('qr-code') as HTMLInputElement)?.value.trim();
+    const discount = parseInt((document.getElementById('qr-discount') as HTMLInputElement)?.value || '50');
+    const sessions = parseInt((document.getElementById('qr-sessions') as HTMLInputElement)?.value || '5');
+    const desc = (document.getElementById('qr-desc') as HTMLInputElement)?.value.trim();
+
+    if (!name || !code) {
+      alert('Please fill in the campaign name and ref code.');
+      return;
+    }
+
+    const { error } = await supabase
+      .from('qr_campaigns')
+      .insert({ code, name, discount_percent: discount, discount_sessions: sessions, description: desc });
+
+    if (error) {
+      alert('Error creating campaign: ' + error.message);
+      return;
+    }
+
+    // Hide form and reload
+    const form = document.getElementById('new-qr-form');
+    if (form) form.style.display = 'none';
+    loadTeacherDashboard();
+  });
+
+  // Logout
+  document.getElementById('teacher-logout-btn')?.addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/';
+  });
+
+  loadTeacherDashboard();
+</script>
+
+<style is:global>
+  .teacher-page { padding: 2rem 1.5rem 4rem; }
+  .teacher-container { max-width: 1000px; margin: 0 auto; }
+  .teacher-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+  }
+  .teacher-header h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.25rem;
+  }
+  .teacher-header p {
+    font-size: 0.95rem;
+    color: #94a3b8;
+  }
+  .logout-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .logout-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .loading-state {
+    text-align: center;
+    padding: 4rem 0;
+    color: #94a3b8;
+  }
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: #6366f1;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 1rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Stats */
+  .teacher-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .stat-card {
+    padding: 1.25rem;
+    border-radius: 16px;
+    background: rgba(15,23,42,0.65);
+    border: 1px solid rgba(255,255,255,0.08);
+    text-align: center;
+  }
+  .stat-value { font-size: 2rem; font-weight: 800; color: #fff; line-height: 1; }
+  .stat-label { font-size: 0.8rem; color: #64748b; margin-top: 0.25rem; }
+
+  /* Tabs */
+  .teacher-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding-bottom: 0.5rem;
+  }
+  .tab-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .tab-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+  .tab-btn.active { color: #fff; background: rgba(99,102,241,0.2); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .tab-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .tab-header h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+  }
+  .btn-primary-sm {
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    background: #6366f1;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .btn-primary-sm:hover { background: #818cf8; }
+  .btn-secondary-sm {
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .btn-secondary-sm:hover { background: rgba(255,255,255,0.1); }
+
+  /* Students list */
+  .students-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .student-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.875rem 1rem;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .student-name { font-size: 0.95rem; color: #fff; font-weight: 600; }
+  .student-email { font-size: 0.85rem; color: #64748b; }
+  .student-meta { margin-left: auto; display: flex; gap: 0.5rem; align-items: center; }
+  .level-badge-sm {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #a5b4fc;
+    background: rgba(99,102,241,0.1);
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
+  }
+  .discount-badge-sm {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #34d399;
+    background: rgba(52,211,153,0.1);
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
+  }
+  .student-date { font-size: 0.8rem; color: #64748b; }
+
+  /* Sessions list */
+  .sessions-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .session-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.875rem 1rem;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .session-student { font-size: 0.95rem; color: #fff; font-weight: 600; }
+  .session-level { font-size: 0.8rem; color: #64748b; }
+  .session-date { font-size: 0.9rem; color: #cbd5e1; font-weight: 500; }
+  .session-time { font-size: 0.85rem; color: #64748b; }
+  .session-actions { margin-left: auto; display: flex; gap: 0.5rem; }
+  .btn-complete {
+    padding: 0.35rem 0.75rem;
+    border-radius: 8px;
+    background: rgba(52,211,153,0.15);
+    color: #34d399;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-complete:hover { background: rgba(52,211,153,0.25); }
+  .btn-cancel {
+    padding: 0.35rem 0.75rem;
+    border-radius: 8px;
+    background: rgba(248,113,113,0.15);
+    color: #f87171;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-cancel:hover { background: rgba(248,113,113,0.25); }
+
+  /* QR list */
+  .qr-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  .qr-row {
+    padding: 1.25rem;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .qr-row.inactive { opacity: 0.5; }
+  .qr-name { font-size: 1rem; color: #fff; font-weight: 600; margin-bottom: 0.25rem; }
+  .qr-code-text { font-size: 0.85rem; color: #a5b4fc; font-family: monospace; margin-bottom: 0.25rem; }
+  .qr-url { font-size: 0.8rem; color: #64748b; word-break: break-all; }
+  .qr-stats { display: flex; gap: 1.5rem; margin: 0.75rem 0; }
+  .qr-stat { text-align: center; }
+  .qr-stat-value { font-size: 1.25rem; font-weight: 700; color: #fff; display: block; }
+  .qr-stat-label { font-size: 0.75rem; color: #64748b; }
+  .qr-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+  .btn-download-qr {
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    background: rgba(99,102,241,0.15);
+    color: #818cf8;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-download-qr:hover { background: rgba(99,102,241,0.25); }
+  .btn-toggle-qr {
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-toggle-qr:hover { background: rgba(255,255,255,0.1); }
+
+  /* New QR form */
+  .new-qr-form {
+    padding: 1.5rem;
+    border-radius: 16px;
+    background: rgba(15,23,42,0.65);
+    border: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 1rem;
+  }
+  .new-qr-form h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+  .form-group label { font-size: 0.8rem; font-weight: 600; color: #cbd5e1; }
+  .form-group input {
+    padding: 0.6rem 0.75rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    font-size: 0.9rem;
+    font-family: inherit;
+    outline: none;
+  }
+  .form-group input:focus { border-color: #6366f1; }
+  .form-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem; }
+
+  .empty-state {
+    font-size: 0.9rem;
+    color: #64748b;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  @media (width <= 640px) {
+    .teacher-stats { grid-template-columns: repeat(2, 1fr); }
+    .form-row { grid-template-columns: 1fr; }
+    .student-row, .session-row, .qr-row { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    .student-meta, .session-actions, .qr-actions { margin-left: 0; }
+    .qr-stats { flex-wrap: wrap; }
+  }
+</style>

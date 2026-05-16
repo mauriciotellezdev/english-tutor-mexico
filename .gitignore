@@ -6,3 +6,4 @@ worker/.env
 worker/node_modules/
 worker/.wrangler/
 .astro/
+.agents/
