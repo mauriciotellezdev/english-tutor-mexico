@@ -7,7 +7,7 @@
     "dev": "astro dev",
     "build": "astro build && node scripts/generate-sitemap.mjs",
     "preview": "astro preview",
-    "deploy": "astro build && npx gh-pages -d dist"
+    "deploy": "bash scripts/deploy.sh"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.2",

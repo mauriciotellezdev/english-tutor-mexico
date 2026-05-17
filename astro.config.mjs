@@ -1,5 +1,4 @@
 import { defineConfig } from "astro/config";
-import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
   site: "https://english-tutor-mexico.pages.dev",
@@ -9,8 +8,7 @@ export default defineConfig({
     locales: ["es", "en"],
     routing: {
       prefixDefaultLocale: true,
-      redirectToDefaultLocale: true,
+      redirectToDefaultLocale: false,
     },
   },
-  integrations: [sitemap()],
 });

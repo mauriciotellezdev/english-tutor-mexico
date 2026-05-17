@@ -53,10 +53,10 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
         }
       }
 
-      // Redirect to dashboard
+      // Redirect to onboarding flow
       title.textContent = 'Welcome!';
-      desc.textContent = 'Redirecting to your dashboard...';
-      window.location.href = '/student/dashboard';
+      desc.textContent = 'Redirecting to onboarding...';
+      window.location.href = '/student/onboarding';
 
     } catch (err: any) {
       if (spinner) spinner.style.display = 'none';

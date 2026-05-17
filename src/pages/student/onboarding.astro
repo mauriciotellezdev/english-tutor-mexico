@@ -1,0 +1,467 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const quiz = {
+  questions: [
+    {"id":1,"level":"A1","question":"My name ___ Carlos.","options":["am","is","are","be"],"answer":"is"},
+    {"id":2,"level":"A1","question":"Choose the correct translation for 'mesa'.","options":["chair","table","window","door"],"answer":"table"},
+    {"id":3,"level":"A1","question":"She ___ coffee every morning.","options":["drink","drinks","drinking","drank"],"answer":"drinks"},
+    {"id":4,"level":"A1","question":"How do you respond to: 'How are you?'","options":["I am fine, thanks.","My name is Luis.","Good night.","See you yesterday."],"answer":"I am fine, thanks."},
+    {"id":5,"level":"A1","question":"We ___ from Mexico.","options":["is","am","are","be"],"answer":"are"},
+    {"id":6,"level":"A1","question":"Maria has two brothers. How many brothers does Maria have?","options":["1","2","3","4"],"answer":"2"},
+    {"id":7,"level":"A2","question":"Yesterday I ___ to the store.","options":["go","went","gone","going"],"answer":"went"},
+    {"id":8,"level":"A2","question":"A person who designs buildings is an ___.","options":["engineer","architect","artist","actor"],"answer":"architect"},
+    {"id":9,"level":"A2","question":"There ___ many people at the party.","options":["was","were","is","be"],"answer":"were"},
+    {"id":10,"level":"A2","question":"What would you say in a restaurant?","options":["I'd like a coffee, please.","Open the window.","I study every day.","Where is your homework?"],"answer":"I'd like a coffee, please."},
+    {"id":11,"level":"A2","question":"I have lived here ___ 2020.","options":["for","since","at","during"],"answer":"since"},
+    {"id":12,"level":"A2","question":"Tom studies English because he wants a better job. Why does Tom study English?","options":["To travel","To get a better job","To meet friends","To buy a car"],"answer":"To get a better job"},
+    {"id":13,"level":"B1","question":"If I ___ more time, I would learn French.","options":["have","had","will have","having"],"answer":"had"},
+    {"id":14,"level":"B1","question":"Choose the synonym for 'difficult'.","options":["easy","hard","small","fast"],"answer":"hard"},
+    {"id":15,"level":"B1","question":"She ___ working here for five years.","options":["has been","have been","is","was"],"answer":"has been"},
+    {"id":16,"level":"B1","question":"John missed the bus, so he arrived late to work. Why was John late?","options":["He overslept","He missed the bus","His car broke down","He was sick"],"answer":"He missed the bus"},
+    {"id":17,"level":"B1","question":"Which sentence is the most polite?","options":["Give me water.","Can you give me some water, please?","Water now.","You bring water."],"answer":"Can you give me some water, please?"},
+    {"id":18,"level":"B1","question":"By the time we arrived, the movie ___.","options":["starts","started","had started","has starting"],"answer":"had started"},
+    {"id":19,"level":"B2","question":"I wish I ___ more confident speaking English.","options":["am","were","was","be"],"answer":"were"},
+    {"id":20,"level":"B2","question":"Choose the word closest in meaning to 'improve'.","options":["reduce","increase","enhance","destroy"],"answer":"enhance"},
+    {"id":21,"level":"B2","question":"Not only ___ late, but he also forgot the documents.","options":["he arrived","did he arrive","arrived he","he did arrive"],"answer":"did he arrive"},
+    {"id":22,"level":"B2","question":"The company increased remote work to improve employee satisfaction. Why did the company increase remote work?","options":["To save electricity","To reduce salaries","To improve employee satisfaction","To hire fewer people"],"answer":"To improve employee satisfaction"},
+    {"id":23,"level":"B2","question":"Which response best shows disagreement politely?","options":["You're wrong.","I don't think that's completely true.","No.","Impossible."],"answer":"I don't think that's completely true."},
+    {"id":24,"level":"B2","question":"If she had studied harder, she ___ the exam.","options":["would pass","would have passed","passed","will pass"],"answer":"would have passed"},
+    {"id":25,"level":"C1","question":"Rarely ___ such an impressive presentation.","options":["I have seen","have I seen","I saw","did I have seen"],"answer":"have I seen"},
+    {"id":26,"level":"C1","question":"Choose the best word: 'The results were completely ___. Nobody expected them.'","options":["predictable","inevitable","unexpected","ordinary"],"answer":"unexpected"},
+    {"id":27,"level":"C1","question":"Despite the initial criticism, the project was ultimately considered a success. What happened to the project?","options":["It failed immediately","It was canceled","It became successful in the end","Nobody finished it"],"answer":"It became successful in the end"},
+    {"id":28,"level":"C1","question":"Which sentence sounds the most natural in a professional meeting?","options":["I wanna talk about sales.","Let's discuss the quarterly sales figures.","Sales are bad.","You need more sales."],"answer":"Let's discuss the quarterly sales figures."},
+    {"id":29,"level":"C1","question":"Had I known about the traffic, I ___ earlier.","options":["would leave","would have left","left","will leave"],"answer":"would have left"},
+    {"id":30,"level":"C1","question":"The manager demanded that every employee ___ the new policy.","options":["understands","understand","understood","understanding"],"answer":"understand"}
+  ]
+};
+---
+
+<BaseLayout title="Welcome | English Immersion" description="Complete your student onboarding.">
+  <section class="onboarding-page">
+    <div class="onboarding-container">
+      <!-- Step indicator -->
+      <div class="steps-indicator">
+        <div class="step-item" data-step="1">
+          <div class="step-circle">1</div>
+          <span>Email</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item" data-step="2">
+          <div class="step-circle">2</div>
+          <span>Quiz</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item" data-step="3">
+          <div class="step-circle">3</div>
+          <span>Purchase</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item" data-step="4">
+          <div class="step-circle">4</div>
+          <span>Consultation</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item" data-step="5">
+          <div class="step-circle">5</div>
+          <span>First Session</span>
+        </div>
+      </div>
+
+      <!-- Step 1: Email verified (shown automatically) -->
+      <div id="step-email" class="onboarding-step" style="display: none;">
+        <div class="step-card">
+          <div class="step-icon">✅</div>
+          <h2>Email Verified</h2>
+          <p>Your email has been confirmed. Next, take the placement test to determine your English level.</p>
+          <button id="start-quiz-btn" class="onboard-btn">Take Placement Test →</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Quiz -->
+      <div id="step-quiz" class="onboarding-step" style="display: none;">
+        <div class="quiz-card">
+          <!-- Welcome screen -->
+          <div id="quiz-welcome">
+            <h2>English Placement Test</h2>
+            <p>30 questions · ~25 minutes · No time limit</p>
+            <p class="quiz-desc">This test determines your CEFR level (A1–C1). Questions get progressively harder. Answer every question — there's no penalty for guessing.</p>
+            <button id="start-quiz" class="onboard-btn">Start the Test</button>
+          </div>
+
+          <!-- Quiz screen -->
+          <div id="quiz-screen" style="display: none;">
+            <div class="quiz-progress-bar">
+              <div class="quiz-progress-fill" id="progress-fill" style="width: 0%;"></div>
+            </div>
+            <div class="quiz-progress-text">
+              <span id="question-counter">Question 1 of 30</span>
+            </div>
+            <div class="question-level" id="question-level">A1</div>
+            <h3 id="question-text" class="question-text"></h3>
+            <div id="options-container" class="options-grid"></div>
+            <div class="quiz-nav">
+              <button id="prev-btn" class="onboard-btn-secondary" disabled>← Previous</button>
+              <button id="next-btn" class="onboard-btn" disabled>Next →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 complete -->
+      <div id="step-quiz-done" class="onboarding-step" style="display: none;">
+        <div class="step-card">
+          <div class="step-icon">🎓</div>
+          <h2>Your Level: <span id="result-level"></span></h2>
+          <p id="result-score"></p>
+          <div class="result-breakdown" id="result-breakdown"></div>
+          <button id="continue-purchase-btn" class="onboard-btn">Continue to Purchase →</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Purchase -->
+      <div id="step-purchase" class="onboarding-step" style="display: none;">
+        <div class="step-card">
+          <div class="step-icon">💳</div>
+          <h2>Choose Your Plan</h2>
+          <p>Buy at least one session to continue. You can upgrade later.</p>
+          <div class="plan-options">
+            <div class="plan-card" data-plan="single">
+              <h3>Trial Session</h3>
+              <div class="plan-price">$400 <span>MXN</span></div>
+              <ul>
+                <li>60-minute session</li>
+                <li>Conversation-first</li>
+                <li>Pay as you go</li>
+              </ul>
+              <button class="plan-btn" data-plan="single">Select →</button>
+            </div>
+            <div class="plan-card featured" data-plan="pack10">
+              <div class="plan-badge">Most Popular</div>
+              <h3>10 Session Pack</h3>
+              <div class="plan-price">$3,000 <span>MXN</span></div>
+              <ul>
+                <li>$300/session (save $1,000)</li>
+                <li>Personalized plan</li>
+                <li>Flexible scheduling</li>
+              </ul>
+              <button class="plan-btn" data-plan="pack10">Select →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4: Book consultation -->
+      <div id="step-consultation" class="onboarding-step" style="display: none;">
+        <div class="step-card">
+          <div class="step-icon">📅</div>
+          <h2>Book Your Free Consultation</h2>
+          <p>20-minute video call to discuss your goals and assess your level in person.</p>
+          <div class="calendly-embed">
+            <div class="calendly-inline-widget" data-url="https://calendly.com/mauriciotellezdev/consulta-gratis?hide_event_type_details=1&hide_gdpr_banner=1&background_color=020617&text_color=ffffff" style="min-width:320px;height:700px;"></div>
+            <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+          </div>
+          <button id="consultation-done-btn" class="onboard-btn" style="margin-top: 1rem;">I've Booked My Consultation →</button>
+        </div>
+      </div>
+
+      <!-- Step 5: Book first session -->
+      <div id="step-first-session" class="onboarding-step" style="display: none;">
+        <div class="step-card">
+          <div class="step-icon">🎯</div>
+          <h2>Book Your First Session</h2>
+          <p>Now schedule your first paid session. This is where the real work begins!</p>
+          <div class="calendly-embed">
+            <div class="calendly-inline-widget" data-url="https://calendly.com/mauriciotellezdev/first-session?hide_event_type_details=1&hide_gdpr_banner=1&background_color=020617&text_color=ffffff" style="min-width:320px;height:700px;"></div>
+            <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+          </div>
+          <button id="first-session-done-btn" class="onboard-btn" style="margin-top: 1rem;">Go to Dashboard →</button>
+        </div>
+      </div>
+
+      <!-- Complete -->
+      <div id="step-complete" class="onboarding-step" style="display: none;">
+        <div class="step-card">
+          <div class="step-icon">🚀</div>
+          <h2>Welcome to English Immersion!</h2>
+          <p>You're all set. Head to your dashboard to manage your sessions.</p>
+          <a href="/student/dashboard" class="onboard-btn">Go to Dashboard →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style is:global>
+  .onboarding-page { padding: 2rem 1.5rem 4rem; min-height: calc(100vh - 200px); }
+  .onboarding-container { max-width: 720px; margin: 0 auto; }
+
+  .steps-indicator { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 2.5rem; flex-wrap: wrap; }
+  .step-item { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; }
+  .step-circle { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; background: rgba(255,255,255,0.06); color: #64748b; border: 2px solid rgba(255,255,255,0.1); transition: all 0.3s; }
+  .step-item.active .step-circle { background: #6366f1; color: #fff; border-color: #6366f1; }
+  .step-item.done .step-circle { background: rgba(52,211,153,0.2); color: #34d399; border-color: #34d399; }
+  .step-item span { font-size: 0.7rem; color: #64748b; font-weight: 500; }
+  .step-item.active span { color: #a5b4fc; }
+  .step-item.done span { color: #34d399; }
+  .step-line { width: 24px; height: 2px; background: rgba(255,255,255,0.1); margin: 0 0.25rem -0.75rem; }
+
+  .step-card { padding: 2.5rem; border-radius: 24px; background: rgba(15,23,42,0.65); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); text-align: center; }
+  .step-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .step-card h2 { font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 0.75rem; }
+  .step-card p { font-size: 0.95rem; color: #94a3b8; line-height: 1.6; margin-bottom: 1.5rem; max-width: 480px; margin-inline: auto; }
+
+  .onboard-btn { padding: 0.875rem 2rem; border-radius: 14px; background: #6366f1; color: #fff; font-size: 1rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; font-family: inherit; display: inline-block; text-decoration: none; }
+  .onboard-btn:hover { background: #818cf8; }
+  .onboard-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .onboard-btn-secondary { padding: 0.875rem 1.5rem; border-radius: 14px; background: rgba(255,255,255,0.05); color: #cbd5e1; font-size: 0.95rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: all 0.2s; font-family: inherit; }
+  .onboard-btn-secondary:hover { background: rgba(255,255,255,0.1); }
+  .onboard-btn-secondary:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .quiz-card { padding: 2.5rem; border-radius: 24px; background: rgba(15,23,42,0.65); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); }
+  .quiz-card h2 { font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem; }
+  .quiz-card > p { font-size: 0.9rem; color: #94a3b8; margin-bottom: 1rem; }
+  .quiz-desc { font-size: 0.9rem; color: #cbd5e1; line-height: 1.7; margin-bottom: 2rem; }
+  .quiz-progress-bar { height: 6px; background: rgba(255,255,255,0.08); border-radius: 999px; margin-bottom: 0.75rem; overflow: hidden; }
+  .quiz-progress-fill { height: 100%; background: #6366f1; border-radius: 999px; transition: width 0.3s; }
+  .quiz-progress-text { display: flex; justify-content: space-between; margin-bottom: 1.5rem; }
+  .quiz-progress-text span { font-size: 0.85rem; color: #64748b; font-weight: 500; }
+  .question-level { display: inline-block; padding: 0.2rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; background: rgba(99,102,241,0.15); color: #a5b4fc; margin-bottom: 1rem; }
+  .question-text { font-size: 1.15rem; font-weight: 700; color: #fff; line-height: 1.4; margin-bottom: 1.5rem; }
+  .options-grid { display: flex; flex-direction: column; gap: 0.75rem; }
+  .option-btn { padding: 1rem 1.25rem; border-radius: 14px; background: rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.08); color: #cbd5e1; font-size: 0.95rem; text-align: left; cursor: pointer; transition: all 0.2s; font-family: inherit; line-height: 1.4; }
+  .option-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); }
+  .option-btn.selected { background: rgba(99,102,241,0.15); border-color: #6366f1; color: #fff; }
+  .quiz-nav { display: flex; justify-content: space-between; margin-top: 1.5rem; }
+
+  .plan-options { display: grid; gap: 1rem; margin-top: 1.5rem; }
+  @media (min-width: 640px) { .plan-options { grid-template-columns: 1fr 1fr; } }
+  .plan-card { padding: 1.5rem; border-radius: 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); text-align: center; position: relative; }
+  .plan-card.featured { border-color: rgba(99,102,241,0.4); background: rgba(99,102,241,0.05); }
+  .plan-badge { position: absolute; top: -0.6rem; left: 50%; transform: translateX(-50%); padding: 0.25rem 1rem; border-radius: 999px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; background: #6366f1; color: #fff; }
+  .plan-card h3 { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
+  .plan-price { font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 1rem; }
+  .plan-price span { font-size: 0.9rem; color: #64748b; font-weight: 400; }
+  .plan-card ul { list-style: none; margin-bottom: 1.5rem; }
+  .plan-card li { font-size: 0.85rem; color: #94a3b8; padding: 0.3rem 0; }
+  .plan-btn { width: 100%; padding: 0.75rem; border-radius: 12px; background: #6366f1; color: #fff; font-size: 0.9rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+  .plan-btn:hover { background: #818cf8; }
+
+  .result-breakdown { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .breakdown-item { padding: 0.4rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; background: rgba(255,255,255,0.05); color: #cbd5e1; }
+  .breakdown-item.correct { background: rgba(52,211,153,0.15); color: #34d399; }
+  .breakdown-item.wrong { background: rgba(248,113,113,0.15); color: #f87171; }
+
+  .calendly-embed { margin-top: 1rem; border-radius: 16px; overflow: hidden; }
+
+  @media (width <= 640px) { .step-card { padding: 1.75rem; } .quiz-card { padding: 1.75rem; } }
+</style>
+
+<script>
+  import { supabase } from '@/lib/supabase';
+
+  const quiz = {
+    questions: [
+      {"id":1,"level":"A1","question":"My name ___ Carlos.","options":["am","is","are","be"],"answer":"is"},
+      {"id":2,"level":"A1","question":"Choose the correct translation for 'mesa'.","options":["chair","table","window","door"],"answer":"table"},
+      {"id":3,"level":"A1","question":"She ___ coffee every morning.","options":["drink","drinks","drinking","drank"],"answer":"drinks"},
+      {"id":4,"level":"A1","question":"How do you respond to: 'How are you?'","options":["I am fine, thanks.","My name is Luis.","Good night.","See you yesterday."],"answer":"I am fine, thanks."},
+      {"id":5,"level":"A1","question":"We ___ from Mexico.","options":["is","am","are","be"],"answer":"are"},
+      {"id":6,"level":"A1","question":"Maria has two brothers. How many brothers does Maria have?","options":["1","2","3","4"],"answer":"2"},
+      {"id":7,"level":"A2","question":"Yesterday I ___ to the store.","options":["go","went","gone","going"],"answer":"went"},
+      {"id":8,"level":"A2","question":"A person who designs buildings is an ___.","options":["engineer","architect","artist","actor"],"answer":"architect"},
+      {"id":9,"level":"A2","question":"There ___ many people at the party.","options":["was","were","is","be"],"answer":"were"},
+      {"id":10,"level":"A2","question":"What would you say in a restaurant?","options":["I'd like a coffee, please.","Open the window.","I study every day.","Where is your homework?"],"answer":"I'd like a coffee, please."},
+      {"id":11,"level":"A2","question":"I have lived here ___ 2020.","options":["for","since","at","during"],"answer":"since"},
+      {"id":12,"level":"A2","question":"Tom studies English because he wants a better job. Why does Tom study English?","options":["To travel","To get a better job","To meet friends","To buy a car"],"answer":"To get a better job"},
+      {"id":13,"level":"B1","question":"If I ___ more time, I would learn French.","options":["have","had","will have","having"],"answer":"had"},
+      {"id":14,"level":"B1","question":"Choose the synonym for 'difficult'.","options":["easy","hard","small","fast"],"answer":"hard"},
+      {"id":15,"level":"B1","question":"She ___ working here for five years.","options":["has been","have been","is","was"],"answer":"has been"},
+      {"id":16,"level":"B1","question":"John missed the bus, so he arrived late to work. Why was John late?","options":["He overslept","He missed the bus","His car broke down","He was sick"],"answer":"He missed the bus"},
+      {"id":17,"level":"B1","question":"Which sentence is the most polite?","options":["Give me water.","Can you give me some water, please?","Water now.","You bring water."],"answer":"Can you give me some water, please?"},
+      {"id":18,"level":"B1","question":"By the time we arrived, the movie ___.","options":["starts","started","had started","has starting"],"answer":"had started"},
+      {"id":19,"level":"B2","question":"I wish I ___ more confident speaking English.","options":["am","were","was","be"],"answer":"were"},
+      {"id":20,"level":"B2","question":"Choose the word closest in meaning to 'improve'.","options":["reduce","increase","enhance","destroy"],"answer":"enhance"},
+      {"id":21,"level":"B2","question":"Not only ___ late, but he also forgot the documents.","options":["he arrived","did he arrive","arrived he","he did arrive"],"answer":"did he arrive"},
+      {"id":22,"level":"B2","question":"The company increased remote work to improve employee satisfaction. Why did the company increase remote work?","options":["To save electricity","To reduce salaries","To improve employee satisfaction","To hire fewer people"],"answer":"To improve employee satisfaction"},
+      {"id":23,"level":"B2","question":"Which response best shows disagreement politely?","options":["You're wrong.","I don't think that's completely true.","No.","Impossible."],"answer":"I don't think that's completely true."},
+      {"id":24,"level":"B2","question":"If she had studied harder, she ___ the exam.","options":["would pass","would have passed","passed","will pass"],"answer":"would have passed"},
+      {"id":25,"level":"C1","question":"Rarely ___ such an impressive presentation.","options":["I have seen","have I seen","I saw","did I have seen"],"answer":"have I seen"},
+      {"id":26,"level":"C1","question":"Choose the best word: 'The results were completely ___. Nobody expected them.'","options":["predictable","inevitable","unexpected","ordinary"],"answer":"unexpected"},
+      {"id":27,"level":"C1","question":"Despite the initial criticism, the project was ultimately considered a success. What happened to the project?","options":["It failed immediately","It was canceled","It became successful in the end","Nobody finished it"],"answer":"It became successful in the end"},
+      {"id":28,"level":"C1","question":"Which sentence sounds the most natural in a professional meeting?","options":["I wanna talk about sales.","Let's discuss the quarterly sales figures.","Sales are bad.","You need more sales."],"answer":"Let's discuss the quarterly sales figures."},
+      {"id":29,"level":"C1","question":"Had I known about the traffic, I ___ earlier.","options":["would leave","would have left","left","will leave"],"answer":"would have left"},
+      {"id":30,"level":"C1","question":"The manager demanded that every employee ___ the new policy.","options":["understands","understand","understood","understanding"],"answer":"understand"}
+    ]
+  };
+
+  // Check auth
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    window.location.href = '/student/login';
+  }
+
+  // Check if returning from Stripe checkout
+  const urlParams = new URLSearchParams(window.location.search);
+  const purchased = urlParams.get('purchased');
+
+  // Track progress
+  let currentStep = 1;
+  const answers: (string | null)[] = new Array(quiz.questions.length).fill(null);
+  let cefrLevel = 'A1';
+
+  if (purchased === 'true') {
+    currentStep = 4;
+    showStep(4);
+  } else {
+    // Show step 1 (email verified)
+    showStep(1);
+  }
+
+  // Step 1: Start quiz
+  document.getElementById('start-quiz-btn')?.addEventListener('click', () => {
+    currentStep = 2;
+    updateSteps();
+    showStep(2);
+  });
+
+  // Quiz logic
+  let currentQuestion = 0;
+
+  document.getElementById('start-quiz')?.addEventListener('click', () => {
+    document.getElementById('quiz-welcome')!.style.display = 'none';
+    document.getElementById('quiz-screen')!.style.display = 'block';
+    renderQuestion();
+  });
+
+  document.getElementById('prev-btn')?.addEventListener('click', () => {
+    if (currentQuestion > 0) { currentQuestion--; renderQuestion(); }
+  });
+
+  document.getElementById('next-btn')?.addEventListener('click', () => {
+    if (currentQuestion < quiz.questions.length - 1) { currentQuestion++; renderQuestion(); }
+    else { submitQuiz(); }
+  });
+
+  function renderQuestion() {
+    const q = quiz.questions[currentQuestion];
+    document.getElementById('question-text')!.textContent = q.question;
+    document.getElementById('question-level')!.textContent = q.level;
+    document.getElementById('question-counter')!.textContent = `Question ${currentQuestion + 1} of ${quiz.questions.length}`;
+    document.getElementById('progress-fill')!.style.width = `${((currentQuestion + 1) / quiz.questions.length) * 100}%`;
+
+    const container = document.getElementById('options-container')!;
+    container.innerHTML = q.options.map(opt => `
+      <button class="option-btn${answers[currentQuestion] === opt ? ' selected' : ''}" data-answer="${opt}">${opt}</button>
+    `).join('');
+
+    container.querySelectorAll('.option-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        answers[currentQuestion] = btn.getAttribute('data-answer');
+        container.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        document.getElementById('next-btn')!.disabled = false;
+      });
+    });
+
+    document.getElementById('prev-btn')!.disabled = currentQuestion === 0;
+    const nextBtn = document.getElementById('next-btn')!;
+    nextBtn.disabled = !answers[currentQuestion];
+    nextBtn.textContent = currentQuestion === quiz.questions.length - 1 ? 'Submit Test' : 'Next →';
+  }
+
+  async function submitQuiz() {
+    let score = 0;
+    const breakdown: {level: string; correct: number; total: number}[] = [];
+    const levels = ['A1', 'A2', 'B1', 'B2', 'C1'];
+
+    for (const level of levels) {
+      const levelQuestions = quiz.questions.filter(q => q.level === level);
+      let correct = 0;
+      for (const q of levelQuestions) {
+        if (answers[q.id - 1] === q.answer) correct++;
+      }
+      score += correct;
+      breakdown.push({ level, correct, total: levelQuestions.length });
+    }
+
+    if (score >= 25) cefrLevel = 'C1';
+    else if (score >= 19) cefrLevel = 'B2';
+    else if (score >= 13) cefrLevel = 'B1';
+    else if (score >= 7) cefrLevel = 'A2';
+
+    // Save to profile
+    await supabase.from('profiles').update({ current_level: cefrLevel.toLowerCase() }).eq('id', session!.user.id);
+
+    // Show results
+    document.getElementById('step-quiz')!.style.display = 'none';
+    document.getElementById('step-quiz-done')!.style.display = 'block';
+    document.getElementById('result-level')!.textContent = cefrLevel;
+    document.getElementById('result-score')!.textContent = `${score} out of ${quiz.questions.length} correct`;
+    document.getElementById('result-breakdown')!.innerHTML = breakdown.map(d =>
+      `<span class="breakdown-item ${d.correct === d.total ? 'correct' : d.correct === 0 ? 'wrong' : ''}">${d.level}: ${d.correct}/${d.total}</span>`
+    ).join('');
+  }
+
+  // Step 3: Purchase
+  document.getElementById('continue-purchase-btn')?.addEventListener('click', () => {
+    currentStep = 3;
+    updateSteps();
+    showStep(3);
+  });
+
+  document.querySelectorAll('.plan-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const plan = btn.getAttribute('data-plan');
+      btn.disabled = true;
+      btn.textContent = 'Redirecting...';
+      try {
+        const res = await fetch('http://localhost:8787/api/create-checkout-session', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tutor: 'mauricio', plan }),
+        });
+        const { url } = await res.json();
+        if (url) window.location.href = url;
+        else throw new Error('No checkout URL');
+      } catch (err) {
+        alert('Something went wrong. Please try again.');
+        btn.disabled = false;
+        btn.textContent = 'Select →';
+      }
+    });
+  });
+
+  // Step 4: Consultation
+  document.getElementById('consultation-done-btn')?.addEventListener('click', () => {
+    currentStep = 5;
+    updateSteps();
+    showStep(5);
+  });
+
+  // Step 5: First session
+  document.getElementById('first-session-done-btn')?.addEventListener('click', async () => {
+    // Mark onboarding complete
+    await supabase.from('profiles').update({ onboarding_complete: true }).eq('id', session!.user.id);
+    currentStep = 6;
+    updateSteps();
+    showStep(6);
+  });
+
+  function showStep(step: number) {
+    const steps = ['step-email', 'step-quiz', 'step-quiz-done', 'step-purchase', 'step-consultation', 'step-first-session', 'step-complete'];
+    steps.forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = (i === step - 1 || (step === 2 && i === 2)) ? 'block' : 'none';
+    });
+    updateSteps();
+  }
+
+  function updateSteps() {
+    document.querySelectorAll('.step-item').forEach((el, i) => {
+      const stepNum = i + 1;
+      el.classList.remove('active', 'done');
+      if (stepNum === currentStep) el.classList.add('active');
+      else if (stepNum < currentStep) el.classList.add('done');
+    });
+  }
+</script>

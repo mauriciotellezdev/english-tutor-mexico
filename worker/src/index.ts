@@ -115,8 +115,8 @@ export default {
         const session = await stripe.checkout.sessions.create({
           mode: "payment",
           line_items: [{ price: priceId, quantity: 1 }],
-          success_url: `${origin}/gracias`,
-          cancel_url: `${origin}/book`,
+          success_url: `${origin}/student/onboarding?purchased=true`,
+          cancel_url: `${origin}/student/onboarding`,
           locale: "es",
           metadata: {
             tutor: "mauricio",

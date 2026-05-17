@@ -1,0 +1,312 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const quiz = {
+  test_name: "English Placement Test",
+  total_questions: 30,
+  scoring: { "0-6": "A1", "7-12": "A2", "13-18": "B1", "19-24": "B2", "25-30": "C1" },
+  questions: [
+    {"id":1,"level":"A1","question":"My name ___ Carlos.","options":["am","is","are","be"],"answer":"is"},
+    {"id":2,"level":"A1","question":"Choose the correct translation for 'mesa'.","options":["chair","table","window","door"],"answer":"table"},
+    {"id":3,"level":"A1","question":"She ___ coffee every morning.","options":["drink","drinks","drinking","drank"],"answer":"drinks"},
+    {"id":4,"level":"A1","question":"How do you respond to: 'How are you?'","options":["I am fine, thanks.","My name is Luis.","Good night.","See you yesterday."],"answer":"I am fine, thanks."},
+    {"id":5,"level":"A1","question":"We ___ from Mexico.","options":["is","am","are","be"],"answer":"are"},
+    {"id":6,"level":"A1","question":"Maria has two brothers. How many brothers does Maria have?","options":["1","2","3","4"],"answer":"2"},
+    {"id":7,"level":"A2","question":"Yesterday I ___ to the store.","options":["go","went","gone","going"],"answer":"went"},
+    {"id":8,"level":"A2","question":"A person who designs buildings is an ___.","options":["engineer","architect","artist","actor"],"answer":"architect"},
+    {"id":9,"level":"A2","question":"There ___ many people at the party.","options":["was","were","is","be"],"answer":"were"},
+    {"id":10,"level":"A2","question":"What would you say in a restaurant?","options":["I'd like a coffee, please.","Open the window.","I study every day.","Where is your homework?"],"answer":"I'd like a coffee, please."},
+    {"id":11,"level":"A2","question":"I have lived here ___ 2020.","options":["for","since","at","during"],"answer":"since"},
+    {"id":12,"level":"A2","question":"Tom studies English because he wants a better job. Why does Tom study English?","options":["To travel","To get a better job","To meet friends","To buy a car"],"answer":"To get a better job"},
+    {"id":13,"level":"B1","question":"If I ___ more time, I would learn French.","options":["have","had","will have","having"],"answer":"had"},
+    {"id":14,"level":"B1","question":"Choose the synonym for 'difficult'.","options":["easy","hard","small","fast"],"answer":"hard"},
+    {"id":15,"level":"B1","question":"She ___ working here for five years.","options":["has been","have been","is","was"],"answer":"has been"},
+    {"id":16,"level":"B1","question":"John missed the bus, so he arrived late to work. Why was John late?","options":["He overslept","He missed the bus","His car broke down","He was sick"],"answer":"He missed the bus"},
+    {"id":17,"level":"B1","question":"Which sentence is the most polite?","options":["Give me water.","Can you give me some water, please?","Water now.","You bring water."],"answer":"Can you give me some water, please?"},
+    {"id":18,"level":"B1","question":"By the time we arrived, the movie ___.","options":["starts","started","had started","has starting"],"answer":"had started"},
+    {"id":19,"level":"B2","question":"I wish I ___ more confident speaking English.","options":["am","were","was","be"],"answer":"were"},
+    {"id":20,"level":"B2","question":"Choose the word closest in meaning to 'improve'.","options":["reduce","increase","enhance","destroy"],"answer":"enhance"},
+    {"id":21,"level":"B2","question":"Not only ___ late, but he also forgot the documents.","options":["he arrived","did he arrive","arrived he","he did arrive"],"answer":"did he arrive"},
+    {"id":22,"level":"B2","question":"The company increased remote work to improve employee satisfaction. Why did the company increase remote work?","options":["To save electricity","To reduce salaries","To improve employee satisfaction","To hire fewer people"],"answer":"To improve employee satisfaction"},
+    {"id":23,"level":"B2","question":"Which response best shows disagreement politely?","options":["You're wrong.","I don't think that's completely true.","No.","Impossible."],"answer":"I don't think that's completely true."},
+    {"id":24,"level":"B2","question":"If she had studied harder, she ___ the exam.","options":["would pass","would have passed","passed","will pass"],"answer":"would have passed"},
+    {"id":25,"level":"C1","question":"Rarely ___ such an impressive presentation.","options":["I have seen","have I seen","I saw","did I have seen"],"answer":"have I seen"},
+    {"id":26,"level":"C1","question":"Choose the best word: 'The results were completely ___. Nobody expected them.'","options":["predictable","inevitable","unexpected","ordinary"],"answer":"unexpected"},
+    {"id":27,"level":"C1","question":"Despite the initial criticism, the project was ultimately considered a success. What happened to the project?","options":["It failed immediately","It was canceled","It became successful in the end","Nobody finished it"],"answer":"It became successful in the end"},
+    {"id":28,"level":"C1","question":"Which sentence sounds the most natural in a professional meeting?","options":["I wanna talk about sales.","Let's discuss the quarterly sales figures.","Sales are bad.","You need more sales."],"answer":"Let's discuss the quarterly sales figures."},
+    {"id":29,"level":"C1","question":"Had I known about the traffic, I ___ earlier.","options":["would leave","would have left","left","will leave"],"answer":"would have left"},
+    {"id":30,"level":"C1","question":"The manager demanded that every employee ___ the new policy.","options":["understands","understand","understood","understanding"],"answer":"understand"}
+  ]
+};
+---
+
+<BaseLayout title="English Placement Test" description="Take the English placement test to determine your CEFR level.">
+  <section class="quiz-page">
+    <div class="quiz-container">
+      <!-- Welcome screen -->
+      <div id="quiz-welcome" class="quiz-card">
+        <div class="quiz-header">
+          <h1>English Placement Test</h1>
+          <p>30 questions · ~25 minutes · No time limit</p>
+        </div>
+        <div class="quiz-info">
+          <p>This test will determine your CEFR level (A1–C1). The questions get progressively harder. Answer every question — there's no penalty for guessing.</p>
+          <p>Your result will be saved to your student profile so Mauricio can tailor sessions to your level.</p>
+        </div>
+        <button id="start-btn" class="quiz-btn-primary">Start the Test</button>
+      </div>
+
+      <!-- Quiz screen -->
+      <div id="quiz-screen" style="display: none;">
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" id="progress-fill" style="width: 0%;"></div>
+        </div>
+        <div class="quiz-progress-text">
+          <span id="question-counter">Question 1 of 30</span>
+          <span id="score-display" class="score-hidden"></span>
+        </div>
+
+        <div class="quiz-card">
+          <div class="question-level" id="question-level">A1</div>
+          <h2 id="question-text" class="question-text"></h2>
+          <div id="options-container" class="options-grid"></div>
+        </div>
+
+        <div class="quiz-nav">
+          <button id="prev-btn" class="quiz-btn-secondary" disabled>← Previous</button>
+          <button id="next-btn" class="quiz-btn-primary" disabled>Next →</button>
+        </div>
+      </div>
+
+      <!-- Results screen -->
+      <div id="quiz-results" style="display: none;">
+        <div class="quiz-card results-card">
+          <div class="results-icon">🎓</div>
+          <h1>Your Level: <span id="result-level" class="result-level"></span></h1>
+          <p id="result-score" class="result-score"></p>
+          <div class="result-breakdown" id="result-breakdown"></div>
+          <div class="result-actions">
+            <a href="/student/dashboard" id="dashboard-link" class="quiz-btn-primary">Go to Dashboard</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style is:global>
+  .quiz-page { padding: 2rem 1.5rem 4rem; min-height: calc(100vh - 200px); display: flex; align-items: center; justify-content: center; }
+  .quiz-container { width: 100%; max-width: 640px; }
+  .quiz-card { padding: 2.5rem; border-radius: 24px; background: rgba(15,23,42,0.65); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); }
+  .quiz-header h1 { font-size: 1.75rem; font-weight: 800; color: #fff; letter-spacing: -0.03em; margin-bottom: 0.5rem; }
+  .quiz-header p { font-size: 0.95rem; color: #94a3b8; margin-bottom: 0; }
+  .quiz-info { margin: 1.5rem 0 2rem; }
+  .quiz-info p { font-size: 0.9rem; color: #cbd5e1; line-height: 1.7; margin-bottom: 0.75rem; }
+  .quiz-btn-primary { padding: 0.875rem 2rem; border-radius: 14px; background: #6366f1; color: #fff; font-size: 1rem; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; font-family: inherit; display: inline-block; text-decoration: none; text-align: center; }
+  .quiz-btn-primary:hover { background: #818cf8; }
+  .quiz-btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .quiz-btn-secondary { padding: 0.875rem 1.5rem; border-radius: 14px; background: rgba(255,255,255,0.05); color: #cbd5e1; font-size: 0.95rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: all 0.2s; font-family: inherit; }
+  .quiz-btn-secondary:hover { background: rgba(255,255,255,0.1); }
+  .quiz-btn-secondary:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .quiz-progress-bar { height: 6px; background: rgba(255,255,255,0.08); border-radius: 999px; margin-bottom: 0.75rem; overflow: hidden; }
+  .quiz-progress-fill { height: 100%; background: #6366f1; border-radius: 999px; transition: width 0.3s; }
+  .quiz-progress-text { display: flex; justify-content: space-between; margin-bottom: 1.5rem; }
+  .quiz-progress-text span { font-size: 0.85rem; color: #64748b; font-weight: 500; }
+  .score-hidden { visibility: hidden; }
+
+  .question-level { display: inline-block; padding: 0.2rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; background: rgba(99,102,241,0.15); color: #a5b4fc; margin-bottom: 1rem; }
+  .question-text { font-size: 1.25rem; font-weight: 700; color: #fff; line-height: 1.4; margin-bottom: 1.5rem; }
+  .options-grid { display: flex; flex-direction: column; gap: 0.75rem; }
+  .option-btn { padding: 1rem 1.25rem; border-radius: 14px; background: rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.08); color: #cbd5e1; font-size: 0.95rem; text-align: left; cursor: pointer; transition: all 0.2s; font-family: inherit; line-height: 1.4; }
+  .option-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); }
+  .option-btn.selected { background: rgba(99,102,241,0.15); border-color: #6366f1; color: #fff; }
+
+  .quiz-nav { display: flex; justify-content: space-between; margin-top: 1.5rem; }
+
+  .results-card { text-align: center; }
+  .results-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .results-card h1 { margin-bottom: 0.5rem; }
+  .result-level { color: #818cf8; }
+  .result-score { font-size: 1.1rem; color: #94a3b8; margin-bottom: 2rem; }
+  .result-breakdown { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .breakdown-item { padding: 0.4rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; background: rgba(255,255,255,0.05); color: #cbd5e1; }
+  .breakdown-item.correct { background: rgba(52,211,153,0.15); color: #34d399; }
+  .breakdown-item.wrong { background: rgba(248,113,113,0.15); color: #f87171; }
+  .result-actions { display: flex; gap: 1rem; justify-content: center; }
+
+  @media (width <= 640px) { .quiz-card { padding: 1.75rem; } .result-actions { flex-direction: column; } }
+</style>
+
+<script>
+  import { supabase } from '@/lib/supabase';
+
+  const quiz = {
+    questions: [
+      {"id":1,"level":"A1","question":"My name ___ Carlos.","options":["am","is","are","be"],"answer":"is"},
+      {"id":2,"level":"A1","question":"Choose the correct translation for 'mesa'.","options":["chair","table","window","door"],"answer":"table"},
+      {"id":3,"level":"A1","question":"She ___ coffee every morning.","options":["drink","drinks","drinking","drank"],"answer":"drinks"},
+      {"id":4,"level":"A1","question":"How do you respond to: 'How are you?'","options":["I am fine, thanks.","My name is Luis.","Good night.","See you yesterday."],"answer":"I am fine, thanks."},
+      {"id":5,"level":"A1","question":"We ___ from Mexico.","options":["is","am","are","be"],"answer":"are"},
+      {"id":6,"level":"A1","question":"Maria has two brothers. How many brothers does Maria have?","options":["1","2","3","4"],"answer":"2"},
+      {"id":7,"level":"A2","question":"Yesterday I ___ to the store.","options":["go","went","gone","going"],"answer":"went"},
+      {"id":8,"level":"A2","question":"A person who designs buildings is an ___.","options":["engineer","architect","artist","actor"],"answer":"architect"},
+      {"id":9,"level":"A2","question":"There ___ many people at the party.","options":["was","were","is","be"],"answer":"were"},
+      {"id":10,"level":"A2","question":"What would you say in a restaurant?","options":["I'd like a coffee, please.","Open the window.","I study every day.","Where is your homework?"],"answer":"I'd like a coffee, please."},
+      {"id":11,"level":"A2","question":"I have lived here ___ 2020.","options":["for","since","at","during"],"answer":"since"},
+      {"id":12,"level":"A2","question":"Tom studies English because he wants a better job. Why does Tom study English?","options":["To travel","To get a better job","To meet friends","To buy a car"],"answer":"To get a better job"},
+      {"id":13,"level":"B1","question":"If I ___ more time, I would learn French.","options":["have","had","will have","having"],"answer":"had"},
+      {"id":14,"level":"B1","question":"Choose the synonym for 'difficult'.","options":["easy","hard","small","fast"],"answer":"hard"},
+      {"id":15,"level":"B1","question":"She ___ working here for five years.","options":["has been","have been","is","was"],"answer":"has been"},
+      {"id":16,"level":"B1","question":"John missed the bus, so he arrived late to work. Why was John late?","options":["He overslept","He missed the bus","His car broke down","He was sick"],"answer":"He missed the bus"},
+      {"id":17,"level":"B1","question":"Which sentence is the most polite?","options":["Give me water.","Can you give me some water, please?","Water now.","You bring water."],"answer":"Can you give me some water, please?"},
+      {"id":18,"level":"B1","question":"By the time we arrived, the movie ___.","options":["starts","started","had started","has starting"],"answer":"had started"},
+      {"id":19,"level":"B2","question":"I wish I ___ more confident speaking English.","options":["am","were","was","be"],"answer":"were"},
+      {"id":20,"level":"B2","question":"Choose the word closest in meaning to 'improve'.","options":["reduce","increase","enhance","destroy"],"answer":"enhance"},
+      {"id":21,"level":"B2","question":"Not only ___ late, but he also forgot the documents.","options":["he arrived","did he arrive","arrived he","he did arrive"],"answer":"did he arrive"},
+      {"id":22,"level":"B2","question":"The company increased remote work to improve employee satisfaction. Why did the company increase remote work?","options":["To save electricity","To reduce salaries","To improve employee satisfaction","To hire fewer people"],"answer":"To improve employee satisfaction"},
+      {"id":23,"level":"B2","question":"Which response best shows disagreement politely?","options":["You're wrong.","I don't think that's completely true.","No.","Impossible."],"answer":"I don't think that's completely true."},
+      {"id":24,"level":"B2","question":"If she had studied harder, she ___ the exam.","options":["would pass","would have passed","passed","will pass"],"answer":"would have passed"},
+      {"id":25,"level":"C1","question":"Rarely ___ such an impressive presentation.","options":["I have seen","have I seen","I saw","did I have seen"],"answer":"have I seen"},
+      {"id":26,"level":"C1","question":"Choose the best word: 'The results were completely ___. Nobody expected them.'","options":["predictable","inevitable","unexpected","ordinary"],"answer":"unexpected"},
+      {"id":27,"level":"C1","question":"Despite the initial criticism, the project was ultimately considered a success. What happened to the project?","options":["It failed immediately","It was canceled","It became successful in the end","Nobody finished it"],"answer":"It became successful in the end"},
+      {"id":28,"level":"C1","question":"Which sentence sounds the most natural in a professional meeting?","options":["I wanna talk about sales.","Let's discuss the quarterly sales figures.","Sales are bad.","You need more sales."],"answer":"Let's discuss the quarterly sales figures."},
+      {"id":29,"level":"C1","question":"Had I known about the traffic, I ___ earlier.","options":["would leave","would have left","left","will leave"],"answer":"would have left"},
+      {"id":30,"level":"C1","question":"The manager demanded that every employee ___ the new policy.","options":["understands","understand","understood","understanding"],"answer":"understand"}
+    ]
+  };
+
+  // Check auth
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    window.location.href = '/student/login';
+  }
+
+  let currentQuestion = 0;
+  const answers: (string | null)[] = new Array(quiz.questions.length).fill(null);
+
+  // DOM elements
+  const welcomeScreen = document.getElementById('quiz-welcome');
+  const quizScreen = document.getElementById('quiz-screen');
+  const resultsScreen = document.getElementById('quiz-results');
+  const startBtn = document.getElementById('start-btn');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  const questionText = document.getElementById('question-text');
+  const questionLevel = document.getElementById('question-level');
+  const optionsContainer = document.getElementById('options-container');
+  const progressFill = document.getElementById('progress-fill');
+  const questionCounter = document.getElementById('question-counter');
+
+  startBtn?.addEventListener('click', () => {
+    if (welcomeScreen) welcomeScreen.style.display = 'none';
+    if (quizScreen) quizScreen.style.display = 'block';
+    renderQuestion();
+  });
+
+  prevBtn?.addEventListener('click', () => {
+    if (currentQuestion > 0) {
+      currentQuestion--;
+      renderQuestion();
+    }
+  });
+
+  nextBtn?.addEventListener('click', () => {
+    if (currentQuestion < quiz.questions.length - 1) {
+      currentQuestion++;
+      renderQuestion();
+    } else {
+      submitQuiz();
+    }
+  });
+
+  function renderQuestion() {
+    const q = quiz.questions[currentQuestion];
+    if (questionText) questionText.textContent = q.question;
+    if (questionLevel) {
+      questionLevel.textContent = q.level;
+      questionLevel.style.background = getLevelColor(q.level);
+    }
+    if (questionCounter) questionCounter.textContent = `Question ${currentQuestion + 1} of ${quiz.questions.length}`;
+    if (progressFill) progressFill.style.width = `${((currentQuestion + 1) / quiz.questions.length) * 100}%`;
+
+    if (optionsContainer) {
+      optionsContainer.innerHTML = q.options.map((opt, i) => `
+        <button class="option-btn${answers[currentQuestion] === opt ? ' selected' : ''}" data-answer="${opt}">
+          ${opt}
+        </button>
+      `).join('');
+
+      optionsContainer.querySelectorAll('.option-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          answers[currentQuestion] = btn.getAttribute('data-answer');
+          optionsContainer.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          if (nextBtn) nextBtn.disabled = false;
+        });
+      });
+    }
+
+    if (prevBtn) prevBtn.disabled = currentQuestion === 0;
+    if (nextBtn) {
+      nextBtn.disabled = !answers[currentQuestion];
+      nextBtn.textContent = currentQuestion === quiz.questions.length - 1 ? 'Submit Test' : 'Next →';
+    }
+  }
+
+  function getLevelColor(level: string): string {
+    const colors: Record<string, string> = {
+      A1: 'rgba(52,211,153,0.15)', A2: 'rgba(34,211,238,0.15)',
+      B1: 'rgba(99,102,241,0.15)', B2: 'rgba(168,85,247,0.15)', C1: 'rgba(244,114,182,0.15)'
+    };
+    return colors[level] || 'rgba(99,102,241,0.15)';
+  }
+
+  async function submitQuiz() {
+    let score = 0;
+    const breakdown: {level: string; correct: number; total: number}[] = [];
+    const levels = ['A1', 'A2', 'B1', 'B2', 'C1'];
+
+    for (const level of levels) {
+      const levelQuestions = quiz.questions.filter(q => q.level === level);
+      let correct = 0;
+      for (const q of levelQuestions) {
+        if (answers[q.id - 1] === q.answer) correct++;
+      }
+      score += correct;
+      breakdown.push({ level, correct, total: levelQuestions.length });
+    }
+
+    // Determine CEFR level
+    let cefrLevel = 'A1';
+    if (score >= 25) cefrLevel = 'C1';
+    else if (score >= 19) cefrLevel = 'B2';
+    else if (score >= 13) cefrLevel = 'B1';
+    else if (score >= 7) cefrLevel = 'A2';
+
+    // Save to profile
+    if (session) {
+      await supabase
+        .from('profiles')
+        .update({ current_level: cefrLevel.toLowerCase() })
+        .eq('id', session.user.id);
+    }
+
+    // Show results
+    if (quizScreen) quizScreen.style.display = 'none';
+    if (resultsScreen) resultsScreen.style.display = 'block';
+
+    const resultLevel = document.getElementById('result-level');
+    if (resultLevel) resultLevel.textContent = cefrLevel;
+
+    const resultScore = document.getElementById('result-score');
+    if (resultScore) resultScore.textContent = `${score} out of ${quiz.questions.length} correct`;
+
+    const resultBreakdown = document.getElementById('result-breakdown');
+    if (resultBreakdown) {
+      resultBreakdown.innerHTML = breakdown.map(d =>
+        `<span class="breakdown-item ${d.correct === d.total ? 'correct' : d.correct === 0 ? 'wrong' : ''}">${d.level}: ${d.correct}/${d.total}</span>`
+      ).join('');
+    }
+  }
+</script>

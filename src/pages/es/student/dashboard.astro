@@ -116,6 +116,17 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
     window.location.href = '/student/login';
   }
 
+  // Check onboarding status
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('onboarding_complete')
+    .eq('id', session.user.id)
+    .single();
+
+  if (!profile?.onboarding_complete) {
+    window.location.href = '/student/onboarding';
+  }
+
   // Load dashboard data
   async function loadDashboard() {
     if (!session) return;
