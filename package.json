@@ -6,10 +6,12 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build && node scripts/generate-sitemap.mjs",
-    "preview": "astro preview",
-    "deploy": "bash scripts/deploy.sh"
+    "preview": "bun run build && wrangler dev",
+    "deploy": "bun run build && wrangler deploy",
+    "cf-typegen": "wrangler types"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "12",
     "@astrojs/sitemap": "^3.7.2",
     "@supabase/supabase-js": "^2.105.4",
     "astro": "^5.0.0",
