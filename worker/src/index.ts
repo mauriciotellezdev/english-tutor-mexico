@@ -5,6 +5,8 @@
  *   POST /api/create-checkout-session — Creates a Stripe Checkout session
  *   POST /api/webhook                  — Handles Stripe webhook events
  *   GET  /api/prices                   — Returns available prices
+ *   POST /api/book-consult             — Signs up student, sends confirmation email
+ *   POST /api/send-magic-link          — Generates magic link via admin API, sends via Resend
  */
 
 import Stripe from "stripe";
@@ -94,13 +96,13 @@ export default {
           httpClient: Stripe.createFetchHttpClient(),
         });
 
-        let body: { plan?: string };
+        let body: { plan?: string; email?: string };
         try {
           body = await request.json();
         } catch {
           return jsonResponse({ error: "Invalid JSON in request body" }, 400, origin);
         }
-        const { plan } = body;
+        const { plan, email } = body;
 
         if (!plan) {
           return jsonResponse({ error: "Missing 'plan' in request body" }, 400, origin);
@@ -115,12 +117,14 @@ export default {
         const session = await stripe.checkout.sessions.create({
           mode: "payment",
           line_items: [{ price: priceId, quantity: 1 }],
-          success_url: `${origin}/student/onboarding?purchased=true`,
+          success_url: `${origin}/student/onboarding`,
           cancel_url: `${origin}/student/onboarding`,
           locale: "es",
+          customer_email: email || undefined,
           metadata: {
             tutor: "mauricio",
             plan,
+            customer_email: email || "",
           },
         });
 
@@ -154,12 +158,41 @@ export default {
         switch (event.type) {
           case "checkout.session.completed": {
             const session = event.data.object as Stripe.Checkout.Session;
-            const email = session.customer_details?.email;
+            const email = session.customer_details?.email || session.customer_email;
             const plan = session.metadata?.plan;
 
             console.log(`✅ Payment completed — ${email} | Plan: ${plan}`);
 
-            // TODO: Send confirmation email, notify you, etc.
+            // Mark has_purchased=true in Supabase profile
+            if (email) {
+              // Find user by email
+              const usersUrl = `${env.SUPABASE_URL}/auth/v1/admin/users`;
+              const usersResp = await fetch(`${usersUrl}?email=${encodeURIComponent(email)}`, {
+                headers: {
+                  apikey: env.SUPABASE_SECRET_KEY,
+                  Authorization: `Bearer ${env.SUPABASE_SECRET_KEY}`,
+                },
+              });
+
+              if (usersResp.ok) {
+                const usersData = await usersResp.json();
+                const user = usersData.users?.[0];
+                if (user?.id) {
+                  // Update profile
+                  await fetch(`${env.SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}`, {
+                    method: "PATCH",
+                    headers: {
+                      "Content-Type": "application/json",
+                      apikey: env.SUPABASE_SECRET_KEY,
+                      Authorization: `Bearer ${env.SUPABASE_SECRET_KEY}`,
+                      Prefer: "return=minimal",
+                    },
+                    body: JSON.stringify({ has_purchased: true }),
+                  });
+                  console.log(`✅ Marked has_purchased=true for ${email}`);
+                }
+              }
+            }
             break;
           }
 

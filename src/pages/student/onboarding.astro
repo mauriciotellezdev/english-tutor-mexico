@@ -301,16 +301,20 @@ const quiz = {
     window.location.href = '/student/login';
   }
 
-  // Check if returning from Stripe checkout
-  const urlParams = new URLSearchParams(window.location.search);
-  const purchased = urlParams.get('purchased');
+  // Fetch profile to check purchase status — NO URL PARAM BYPASSES
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('has_purchased, current_level')
+    .eq('id', session.user.id)
+    .single();
 
   // Track progress
   let currentStep = 1;
   const answers: (string | null)[] = new Array(quiz.questions.length).fill(null);
   let cefrLevel = 'A1';
 
-  if (purchased === 'true') {
+  // If profile says purchased, skip to consultation step
+  if (profile?.has_purchased) {
     currentStep = 4;
     showStep(4);
   } else {
