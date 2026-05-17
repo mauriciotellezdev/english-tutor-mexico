@@ -11,10 +11,10 @@ import { dirname, join } from 'path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const client = new Client({
-  host: 'aws-0-us-east-1.pooler.supabase.com',
-  port: 6543,
+  host: 'db.qkjgaoivtfynutxsjmqs.supabase.co',
+  port: 5432,
   database: 'postgres',
-  user: 'postgres.qkjgaoivtfynutxsjmqs',
+  user: 'postgres',
   password: 'Lf@n-9M_f@A*.*m!sd',
   ssl: { rejectUnauthorized: false },
 });
