@@ -7,3 +7,4 @@ worker/node_modules/
 worker/.wrangler/
 .astro/
 .agents/
+.env.local
