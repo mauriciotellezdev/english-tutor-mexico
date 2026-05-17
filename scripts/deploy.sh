@@ -5,6 +5,12 @@ echo "========================================="
 echo "  Add → Commit → Push → Deploy"
 echo "========================================="
 
+# Load Cloudflare credentials
+if [ -f worker/.env ]; then
+  export CLOUDFLARE_ACCOUNT_ID=$(grep CLOUDFLARE_ACCOUNT_ID worker/.env | cut -d= -f2)
+  export CLOUDFLARE_API_TOKEN=$(grep CLOUDFLARE_API_TOKEN worker/.env | cut -d= -f2)
+fi
+
 # 1. Add + Commit
 echo ""
 echo "📦 Staging changes..."
